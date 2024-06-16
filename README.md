@@ -13,5 +13,6 @@ This is the repo for the client and server code for the echo chamber extension. 
 
 
 ## Getting Started Backend
+- Make sure you've installed dependencies `pip install -r ./server/requirements.txt`
 - Run `flask --app server/controllers/getEchoChamberStatus run` from the root directory to run the server
 - Go to `http://127.0.0.1:5000` to inspect 
