@@ -7,7 +7,7 @@ click==8.1.7
 Flask==3.0.3
 google-ai-generativelanguage==0.6.4
 google-api-core==2.19.0
-google-api-python-client==2.133.0
+google-api-python-client==2.134.0
 google-auth==2.30.0
 google-auth-httplib2==0.2.0
 google-generativeai==0.6.0
@@ -27,6 +27,7 @@ pyasn1_modules==0.4.0
 pydantic==2.7.4
 pydantic_core==2.18.4
 pyparsing==3.1.2
+python-dotenv==1.0.1
 requests==2.32.3
 rsa==4.9
 tqdm==4.66.4
