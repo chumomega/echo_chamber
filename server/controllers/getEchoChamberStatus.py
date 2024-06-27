@@ -1,11 +1,14 @@
 from flask import Flask, request
+from dotenv import load_dotenv
 # Import libraries
 from googleapiclient.discovery import build
+from os import environ
 import google.generativeai as genai
 import logging
+load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
-YOUTUBE_DATA_API_KEY = ""
+YOUTUBE_DATA_API_KEY = environ.get('YOUTUBE_DATA_API_KEY')
 MAX_OPINIONS = 5
 
 app = Flask(__name__)
