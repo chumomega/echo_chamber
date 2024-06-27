@@ -5,7 +5,7 @@ import google.generativeai as genai
 import logging
 
 # TODO - abstract to env variabls
-YOUTUBE_DATA_API_KEY = "AIzaSyCDCTZp4MaApIyX4r5aUOXE5Fjbnu9TPKw"
+YOUTUBE_DATA_API_KEY = ""
 MAX_OPINIONS = 5
 
 app = Flask(__name__)
