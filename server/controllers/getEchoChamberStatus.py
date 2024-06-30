@@ -5,10 +5,12 @@ from googleapiclient.discovery import build
 from os import environ
 import google.generativeai as genai
 import logging
+from server.utils.text_api import TextAPI
 load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
 YOUTUBE_DATA_API_KEY = environ.get('YOUTUBE_DATA_API_KEY')
+GEMINI_API_KEY = environ.get('GEMINI_API_KEY')
 MAX_OPINIONS = 5
 
 app = Flask(__name__)
@@ -39,11 +41,12 @@ def get_echo_chamber_status():
     # TODO - get_chamber_labels(commentThreads) -> list:
     # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
 
+    text_api = TextAPI(GEMINI_API_KEY)
     return {
         "isChamber": True,
         "chamberLabel": "right-wing",
         "chamberMagnitude": 9,
-        "chamberReasoning": "Because I said so"
+        "chamberReasoning": text_api.get_response_from_ai("what is your name?")
     }
 
 def validateInput(identifier, chamber_type) -> None:
