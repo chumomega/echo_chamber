@@ -1,0 +1,20 @@
+# Use the Cloud Build builder for Docker
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/echo-chamber-427700/echochamber:latest', './server']
+
+# Optional: Push the image to GCR (replace with your preferred image location)
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['docker', 'push', 'gcr.io/echo-chamber-427700/echochamber:latest']
+  when: 'always'  # Run this step always (optional, adjust as needed)
+
+# Deploy the image to Cloud Run
+- name: 'gcloud'
+  args: ['run', 'deploy', 'echochamber', '--image', 'gcr.io/echo-chamber-427700/echochamber:latest', '--region=us-east1']
+
+# Triggers (optional)
+triggers:
+- kind: cloud-source-repository  # Trigger on push to a Git repository
+  project: echo-chamber-427700
+  repository: echo_chamber
+  branch: main

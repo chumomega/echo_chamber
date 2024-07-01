@@ -13,10 +13,14 @@ This is the repo for the client and server code for the echo chamber extension. 
 
 
 ## Getting Started Backend
-- Make sure you've installed dependencies `pip install -r ./server/requirements.txt`
-- Run `flask --app server/controllers/getEchoChamberStatus run` from the root directory to run the server
-- Go to `http://127.0.0.1:5000` to inspect 
+- Navigate to root directory for server `cd ./server`
+- Make sure you've installed dependencies `pip install -r ./requirements.txt`
+- Run `gunicorn main:app` from the root dir to run the server
+- Go to `http://127.0.0.1:8000` to inspect 
 
+## Build and Deploy
+- Run `gcloud builds submit --tag gcr.io/echo-chamber-427700/echochamber` to build container image
+- Run `gcloud run deploy --image gcr.io/echo-chamber-427700/echochamber` to deploy the container you built
 
 ### Notes
 - If you add a python dependency, please make sure to run `pip freeze > requirements.txt` so that dependency will get written to our requirements file

@@ -1,11 +1,11 @@
-from flask import Flask, request
+from flask import request, Blueprint
 from dotenv import load_dotenv
 # Import libraries
 from googleapiclient.discovery import build
 from os import environ
 import google.generativeai as genai
 import logging
-from server.utils.text_api import TextAPI
+from utils.text_api import TextAPI
 load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
@@ -13,13 +13,14 @@ YOUTUBE_DATA_API_KEY = environ.get('YOUTUBE_DATA_API_KEY')
 GEMINI_API_KEY = environ.get('GEMINI_API_KEY')
 MAX_OPINIONS = 5
 
-app = Flask(__name__)
+# Create a blueprint with a name and import name
+echo_chamber_info_routes = Blueprint("echo_chamber_info_routes", __name__)
 
-@app.route("/")
+@echo_chamber_info_routes.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/getEchoChamberStatus")
+@echo_chamber_info_routes.route("/getEchoChamberStatus")
 def get_echo_chamber_status():
     identifier = request.args.get('identifier')
     chamber_type = request.args.get('chamber_type')
@@ -58,3 +59,4 @@ def validateInput(identifier, chamber_type) -> None:
 def getYoutubeClient():
     # Build the YouTube service object
     return build("youtube", "v3", developerKey=YOUTUBE_DATA_API_KEY)
+
