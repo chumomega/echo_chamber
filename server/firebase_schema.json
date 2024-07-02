@@ -1,0 +1,96 @@
+{
+    "chambers": {
+        "youtube": {
+            "chamber1": {
+                "timestamp": 1459361875666,
+                "label_magnitudes": {
+                    "political": {
+                        "strategy": null,
+                        "left-wing": 4,
+                        "right-wing": 3,
+                        "moderate": 2
+                    }
+                }
+            },
+            "chamber2": {
+                "timestamp": 1459361875666
+            }
+        },
+        "reddit": {
+
+        },
+        "x": {
+
+        }
+    },
+    "chamber_members": {
+        "youtube": {
+            "chamber1": {
+                "comment1": true,
+                "comment2": true
+            },
+            "chamber2": {
+                "comment3": true,
+                "comment4": true
+            }
+        },
+        "reddit": {
+
+        },
+        "x": {
+
+        }
+    },
+    "comments": {
+        "youtube": {
+            "comment1": {
+                "timestamp": 1459361875666,
+                "label_magnitudes": {
+                    "political": {
+                        "strategy": null,
+                        "left-wing": 4,
+                        "right-wing": 3,
+                        "moderate": 2
+                    }
+                }
+            },
+            "comment2": {
+                "timestamp": 1459361875666
+            }
+        },
+        "reddit": {
+
+        },
+        "x": {
+
+        }
+    },
+    "comment_tags": {
+        "youtube": {
+            "comment1": {
+                "tag1": true,
+                "tag2": true
+            },
+            "comment2": {
+                "tag3": true,
+                "tag2": true
+            }
+        },
+        "reddit": {
+
+        },
+        "x": {
+
+        }
+    },
+    "tags": {
+        "tag1": {
+
+        },
+        "tag2": {
+
+        }
+    }
+
+
+}
