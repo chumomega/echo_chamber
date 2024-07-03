@@ -6,6 +6,7 @@ from os import environ
 import google.generativeai as genai
 import logging
 from utils.text_api import TextAPI
+from model.FirebaseClient import FirebaseClient
 load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
@@ -38,6 +39,9 @@ def get_echo_chamber_status():
     )
     threads_response  = comment_thread_request.execute()
     logging.info("Number of opinions received from youtube: {}".format(len(threads_response["items"])))
+
+    firebase_client = FirebaseClient()
+    firebase_client.add_users()
 
     # TODO - get_chamber_labels(commentThreads) -> list:
     # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
