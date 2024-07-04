@@ -1,20 +1,16 @@
 from firebase_admin import db
+from model import Chamber
 
 # Do not create yourself. please use via context initializers :)
 class FirebaseClient:
     def __init__(self) -> None:
-        self.ref = db.reference('tables/chambers')
+        self.chambers_table = db.reference('tables/chambers')
+        self.chamber_members_table = db.reference('tables/chamber_members')
+        self.comments_table = db.reference('tables/comments')
+        self.comment_tags_table = db.reference('tables/comment_tags')
+        self.tags_table = db.reference('tables/tags')
         return
     
-    def add_users(self) -> None:
-        users_ref = self.ref.child('users')
-        users_ref.set({
-            'alanisawesome': {
-                'date_of_birth': 'June 23, 1912',
-                'full_name': 'Alan Turing'
-            },
-            'gracehop': {
-                'date_of_birth': 'December 9, 1906',
-                'full_name': 'Grace Hopper'
-            }
-        })
+    def add_chamber(self, chamber: Chamber) -> None:
+        chamber_x_ref = self.chambers_table.child(chamber.get_id())
+        chamber_x_ref.set(chamber.get_json_body())

@@ -2,18 +2,23 @@
     "chambers": {
         "youtube": {
             "chamber1": {
-                "timestamp": 1459361875666,
+                "created_timestamp": 1459361875666,
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                "author": "Italy",
+                "id": "abc123",
+                "type": "video",
                 "label_magnitudes": {
                     "political": {
                         "strategy": null,
                         "left-wing": 4,
                         "right-wing": 3,
-                        "moderate": 2
+                        "moderate": 2,
+                        "created_timestamp": 1459361875666
                     }
                 }
             },
             "chamber2": {
-                "timestamp": 1459361875666
+                "created_timestamp": 1459361875666
             }
         },
         "reddit": {

@@ -7,6 +7,7 @@ import google.generativeai as genai
 import logging
 from utils.text_api import TextAPI
 from context_initializers.firebase_initializers import get_firebase
+from model.Chamber import Chamber
 load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
@@ -32,6 +33,22 @@ def get_echo_chamber_status():
         raise Exception(f"Chamber type not supported: {chamber_type}")
     
     youtube_client = getYoutubeClient()
+    video_request = youtube_client.videos().list(
+        part="snippet",
+        id=identifier,
+        maxResults=MAX_OPINIONS
+    )
+    video_response = video_request.execute()
+
+    chamber_x = Chamber(
+        id = identifier, 
+        title = video_response["items"][0]["snippet"]["title"],
+        description = video_response["items"][0]["snippet"]["description"],
+        author = video_response["items"][0]["snippet"]["channelTitle"])
+
+    firebase_client = get_firebase()
+    firebase_client.add_chamber(chamber_x)
+
     comment_thread_request = youtube_client.commentThreads().list(
         part="snippet",
         videoId=identifier,
@@ -40,8 +57,6 @@ def get_echo_chamber_status():
     threads_response  = comment_thread_request.execute()
     logging.info("Number of opinions received from youtube: {}".format(len(threads_response["items"])))
 
-    firebase_client = get_firebase()
-    firebase_client.add_users()
     # TODO - get_chamber_labels(commentThreads) -> list:
     # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
 
