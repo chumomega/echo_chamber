@@ -8,6 +8,7 @@ import logging
 from utils.text_api import TextAPI
 from context_initializers.firebase_initializers import get_firebase
 from model.Chamber import Chamber
+from model.ChamberType import ChamberType
 load_dotenv()     # this loads in the environment variables from the .env file
 
 # TODO - abstract to env variabls
@@ -28,10 +29,6 @@ def get_echo_chamber_status():
     chamber_type = request.args.get('chamber_type')
     validateInput(identifier, chamber_type)
     
-    # TODO - support other internet spaces like X and Reddit
-    if chamber_type != "youtube":
-        raise Exception(f"Chamber type not supported: {chamber_type}")
-    
     youtube_client = getYoutubeClient()
     video_request = youtube_client.videos().list(
         part="snippet",
@@ -47,7 +44,7 @@ def get_echo_chamber_status():
         author = video_response["items"][0]["snippet"]["channelTitle"])
 
     firebase_client = get_firebase()
-    firebase_client.add_chamber(chamber_x)
+    firebase_client.add_chamber(chamber_x, chamber_type)
 
     comment_thread_request = youtube_client.commentThreads().list(
         part="snippet",
@@ -68,9 +65,13 @@ def get_echo_chamber_status():
         "chamberReasoning": text_api.get_response_from_ai("what is your name?")
     }
 
-def validateInput(identifier, chamber_type) -> None:
-    if identifier is None or chamber_type is None:
-        raise Exception(f"Empty input! identifier: {identifier} || chamber_type: {chamber_type}")
+def validateInput(identifier: str, chamber_type: str) -> None:
+    if identifier is None:
+        raise Exception(f"Bad identifier: {identifier}")
+    elif not chamber_type.isdigit():
+        raise Exception(f"Bad chamber type: {chamber_type}")
+    elif not ChamberType.has_value(int(chamber_type)):
+        raise Exception(f"Unsupported chamber type: {chamber_type}")
     else:
         return
 

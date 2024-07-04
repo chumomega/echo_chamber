@@ -1,5 +1,5 @@
 from firebase_admin import db
-from model import Chamber
+from model import Chamber, ChamberType
 
 # Do not create yourself. please use via context initializers :)
 class FirebaseClient:
@@ -11,6 +11,6 @@ class FirebaseClient:
         self.tags_table = db.reference('tables/tags')
         return
     
-    def add_chamber(self, chamber: Chamber) -> None:
-        chamber_x_ref = self.chambers_table.child(chamber.get_id())
+    def add_chamber(self, chamber: Chamber, chamber_type: ChamberType) -> None:
+        chamber_x_ref = self.chambers_table.child(chamber_type).child(chamber.get_id())
         chamber_x_ref.set(chamber.get_json_body())
