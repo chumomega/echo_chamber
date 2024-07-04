@@ -1,11 +1,8 @@
-import firebase_admin
 from firebase_admin import db
 
+# Do not create yourself. please use via context initializers :)
 class FirebaseClient:
-    fb_app = None
-
     def __init__(self) -> None:
-        firebase_admin.initialize_app(options = {"databaseURL": "https://echo-chamber-427700-default-rtdb.firebaseio.com/"})
         self.ref = db.reference('tables/chambers')
         return
     
