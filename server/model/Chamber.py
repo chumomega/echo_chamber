@@ -41,3 +41,8 @@ class Chamber:
             body["label_magnitudes"] = self.label_magnitudes
         
         return body
+    
+    def __str__(self):
+        return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \
+            author='{self.author}', created_timestamp='{self.created_timestamp}', \
+                label_magnitudes='{self.label_magnitudes}')"

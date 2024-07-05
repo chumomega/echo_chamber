@@ -1,7 +1,7 @@
 from enum import Enum
 
 class ChamberType(Enum):
-    YOUTUBE = 1
+    YOUTUBE = 'youtube'
 
     @classmethod
     def has_value(cls, value):

@@ -28,6 +28,51 @@ def get_echo_chamber_status():
     identifier = request.args.get('identifier')
     chamber_type = request.args.get('chamber_type')
     validateInput(identifier, chamber_type)
+
+    chamber_x = get_chamber(identifier=identifier, chamber_type=chamber_type)
+    print(f"Chamber we found: {chamber_x}")
+    youtube_client = getYoutubeClient()
+    comment_thread_request = youtube_client.commentThreads().list(
+        part="snippet",
+        videoId=identifier,
+        maxResults=MAX_OPINIONS
+    )
+    threads_response  = comment_thread_request.execute()
+    logging.info("Number of opinions received from youtube: {}".format(len(threads_response["items"])))
+
+    # TODO - get_chamber_labels(commentThreads) -> list:
+    # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
+
+    # text_api = TextAPI(GEMINI_API_KEY)
+    # text_api.get_response_from_ai("what is your name?")
+    return {
+        "isChamber": True,
+        "chamberLabel": "right-wing",
+        "chamberMagnitude": 9,
+        "chamberReasoning": 1
+    }
+
+def validateInput(identifier: str, chamber_type: str) -> None:
+    if identifier is None:
+        raise Exception(f"Bad identifier: {identifier}")
+    elif not ChamberType.has_value(chamber_type):
+        raise Exception(f"Unsupported chamber type: {chamber_type}")
+    else:
+        return
+
+def get_chamber(identifier: str, chamber_type: str) -> Chamber:
+    match chamber_type:
+        case ChamberType.YOUTUBE.value:
+            return get_youtube_chamber(identifier)
+        case _:
+            raise Exception(f"Unsupported chamber type: {chamber_type}")
+
+def get_youtube_chamber(identifier: str) -> Chamber:
+    firebase_client = get_firebase()
+    chamber_from_db = firebase_client.get_chamber(identifier)
+    if chamber_from_db is not None:
+        print("found Chamber")
+        return chamber_from_db
     
     youtube_client = getYoutubeClient()
     video_request = youtube_client.videos().list(
@@ -43,37 +88,8 @@ def get_echo_chamber_status():
         description = video_response["items"][0]["snippet"]["description"],
         author = video_response["items"][0]["snippet"]["channelTitle"])
 
-    firebase_client = get_firebase()
-    firebase_client.add_chamber(chamber_x, chamber_type)
-
-    comment_thread_request = youtube_client.commentThreads().list(
-        part="snippet",
-        videoId=identifier,
-        maxResults=MAX_OPINIONS
-    )
-    threads_response  = comment_thread_request.execute()
-    logging.info("Number of opinions received from youtube: {}".format(len(threads_response["items"])))
-
-    # TODO - get_chamber_labels(commentThreads) -> list:
-    # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
-
-    text_api = TextAPI(GEMINI_API_KEY)
-    return {
-        "isChamber": True,
-        "chamberLabel": "right-wing",
-        "chamberMagnitude": 9,
-        "chamberReasoning": text_api.get_response_from_ai("what is your name?")
-    }
-
-def validateInput(identifier: str, chamber_type: str) -> None:
-    if identifier is None:
-        raise Exception(f"Bad identifier: {identifier}")
-    elif not chamber_type.isdigit():
-        raise Exception(f"Bad chamber type: {chamber_type}")
-    elif not ChamberType.has_value(int(chamber_type)):
-        raise Exception(f"Unsupported chamber type: {chamber_type}")
-    else:
-        return
+    firebase_client.add_chamber(chamber_x, ChamberType.YOUTUBE)
+    return chamber_x
 
 def getYoutubeClient():
     # Build the YouTube service object
