@@ -1,5 +1,6 @@
 from firebase_admin import db
-from model import Chamber, ChamberType
+from model.Chamber import Chamber
+from model.ChamberType import ChamberType
 
 CHAMBERS_TABLE = "tables/chambers"
 CHAMBER_MEMBERS_TABLE = "tables/chamber_members"
@@ -16,16 +17,17 @@ class FirebaseClient:
         chamber_x_ref = db.reference(CHAMBERS_TABLE).child(chamber_type.value).child(chamber.get_id())
         chamber_x_ref.set(chamber.get_json_body())
 
-    def get_chamber(self, identifier: str) -> ChamberType:
-        ref = db.reference(CHAMBERS_TABLE + "/{}".format(identifier))
+    def get_chamber(self, identifier: str, chamber_type: ChamberType) -> Chamber:
+        ref = db.reference(CHAMBERS_TABLE + "/{}/{}".format(chamber_type.value, identifier))
+        print(ref.get())
         chamber_response = ref.get()
         if chamber_response is None:
             return None
         return Chamber (
             id = identifier,
-            title = chamber_response["title"],
-            description = chamber_response["description"],
-            author = chamber_response["author"], 
-            created_timestamp = chamber_response["created_timestamp"],
-            label_magnitudes = chamber_response["label_magnitudes"]
+            title = chamber_response.get("title", None),
+            description = chamber_response.get("description", None),
+            author = chamber_response.get("author", None), 
+            created_timestamp = chamber_response.get("created_timestamp", None),
+            label_magnitudes = chamber_response.get("label_magnitudes", None)
         )

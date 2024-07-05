@@ -30,7 +30,6 @@ def get_echo_chamber_status():
     validateInput(identifier, chamber_type)
 
     chamber_x = get_chamber(identifier=identifier, chamber_type=chamber_type)
-    print(f"Chamber we found: {chamber_x}")
     youtube_client = getYoutubeClient()
     comment_thread_request = youtube_client.commentThreads().list(
         part="snippet",
@@ -69,9 +68,9 @@ def get_chamber(identifier: str, chamber_type: str) -> Chamber:
 
 def get_youtube_chamber(identifier: str) -> Chamber:
     firebase_client = get_firebase()
-    chamber_from_db = firebase_client.get_chamber(identifier)
+    chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.YOUTUBE)
     if chamber_from_db is not None:
-        print("found Chamber")
+        print(f"Chamber we found: {chamber_from_db}")
         return chamber_from_db
     
     youtube_client = getYoutubeClient()
