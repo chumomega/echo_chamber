@@ -19,7 +19,6 @@ class FirebaseClient:
 
     def get_chamber(self, identifier: str, chamber_type: ChamberType) -> Chamber:
         ref = db.reference(CHAMBERS_TABLE + "/{}/{}".format(chamber_type.value, identifier))
-        print(ref.get())
         chamber_response = ref.get()
         if chamber_response is None:
             return None

@@ -1,23 +1,12 @@
 from flask import request, Blueprint
-from dotenv import load_dotenv
-# Import libraries
-from googleapiclient.discovery import build
 from os import environ
-import google.generativeai as genai
-import logging
-from utils.text_api import TextAPI
-from context_initializers.firebase_initializers import get_firebase
+from context_initializers import get_firebase, get_youtube, get_gemini
 from model.Chamber import Chamber
 from model.ChamberType import ChamberType
-load_dotenv()     # this loads in the environment variables from the .env file
-
-# TODO - abstract to env variabls
-YOUTUBE_DATA_API_KEY = environ.get('YOUTUBE_DATA_API_KEY')
-GEMINI_API_KEY = environ.get('GEMINI_API_KEY')
-MAX_OPINIONS = 5
 
 # Create a blueprint with a name and import name
 echo_chamber_info_routes = Blueprint("echo_chamber_info_routes", __name__)
+
 
 @echo_chamber_info_routes.route("/")
 def hello_world():
@@ -30,15 +19,7 @@ def get_echo_chamber_status():
     validateInput(identifier, chamber_type)
 
     chamber_x = get_chamber(identifier=identifier, chamber_type=chamber_type)
-    youtube_client = getYoutubeClient()
-    comment_thread_request = youtube_client.commentThreads().list(
-        part="snippet",
-        videoId=identifier,
-        maxResults=MAX_OPINIONS
-    )
-    threads_response  = comment_thread_request.execute()
-    logging.info("Number of opinions received from youtube: {}".format(len(threads_response["items"])))
-
+    chamber_members = get_youtube_chamber_members(identifier=identifier)
     # TODO - get_chamber_labels(commentThreads) -> list:
     # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
 
@@ -70,27 +51,24 @@ def get_youtube_chamber(identifier: str) -> Chamber:
     firebase_client = get_firebase()
     chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.YOUTUBE)
     if chamber_from_db is not None:
-        print(f"Chamber we found: {chamber_from_db}")
         return chamber_from_db
     
-    youtube_client = getYoutubeClient()
-    video_request = youtube_client.videos().list(
-        part="snippet",
-        id=identifier,
-        maxResults=MAX_OPINIONS
-    )
-    video_response = video_request.execute()
+    youtube_client = get_youtube()
+    chamber = youtube_client.get_video_chamber(identifier)
+    firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
+    return chamber
 
-    chamber_x = Chamber(
-        id = identifier, 
-        title = video_response["items"][0]["snippet"]["title"],
-        description = video_response["items"][0]["snippet"]["description"],
-        author = video_response["items"][0]["snippet"]["channelTitle"])
+def get_youtube_chamber_members(identifier: str) -> Chamber:
+    # firebase_client = get_firebase()
+    # chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.YOUTUBE)
+    # if chamber_from_db is not None:
+    #     return chamber_from_db
+    
+    youtube_client = get_youtube()
+    video_comments = youtube_client.get_video_comments(identifier)
 
-    firebase_client.add_chamber(chamber_x, ChamberType.YOUTUBE)
-    return chamber_x
+    gemini_client = get_gemini()
+    gemini_client.get_labels_for_comments(video_comments)
 
-def getYoutubeClient():
-    # Build the YouTube service object
-    return build("youtube", "v3", developerKey=YOUTUBE_DATA_API_KEY)
-
+    # firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
+    return video_comments
