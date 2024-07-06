@@ -3,6 +3,7 @@ from model.Comment import Comment
 import json
 import logging
 from os import environ 
+from string import Template
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -27,37 +28,54 @@ class GeminiClient:
         return response.text
     
     def get_labels_for_comments(self, comments: list[Comment]):
-        political_labels_json = json.dumps(POLITICAL_LABELS, ensure_ascii=False)
+        political_labels_json = json.dumps(POLITICAL_LABELS)
         json_comments = self.get_json_comments_str(comments)
-        prompt = """{{
-            "text": "Given a list of comments with unique IDs, their text content, and their authors; analyze each comment to identify political leaning. Then provide json with the keys being comment ids and the values being json dict of the labels as keys and the magnitudes as values.", 
-            "fixed_political_labels": {}, 
-            "exampleOutput": { 
-                "UgzDsRJK-wcq2BEBwBN4AaABAg": {
-                    "communist": 3,
+        prompt = """
+            Put your data analyst/labeler hat on.
+
+            Please provide me with a JSON response of your perception of the best label 
+            fit with magnitude for each of the values in the "input" I provide. Please only give labels 
+            from the "fixed_labels" I provide. Please reply only with JSON similar to the 
+            following "example_output".
+
+            "fixed_labels": $political_labels
+
+            "example_output": { 
+                "conservativeCommentId1": {
+                    "communist": 1,
                     "leftist": 1,
-                    "liberal": 2,
-                    "moderate": 4,
-                    "conservative": 1,
+                    "liberal": 1,
+                    "moderate": 1,
+                    "conservative": 9,
                     "nationalist": 4
                 }, 
-                "Ugw1xwhFJaVjxojdvUV4AaABAg": {...} 
-            }, 
-            "input": {} 
-        }}""".format(political_labels_json, json_comments)
+                "nonPoliticalCommentId1": {
+                    "communist": 0,
+                    "leftist": 0,
+                    "liberal": 0,
+                    "moderate": 0,
+                    "conservative": 0,
+                    "nationalist": 0
+                }
+            }
+
+            "input": $comments 
+        """
+        prompt_template = Template(prompt)
+        complete_prompt_request = prompt_template.substitute(political_labels=political_labels_json, comments=json_comments)
         # formatted_str = " {} | {}".format(political_labels_json, json_comments)
-        logger.info(f"test formatted str: {prompt}")
+        logger.info(f"test formatted str: {str(complete_prompt_request)}")
         # return []
-        response = self.get_response_from_ai(prompt)
+        response = self.get_response_from_ai(complete_prompt_request)
         try:
             json_response = json.loads(response)
             logger.info("Successfully parsed Gemini labels for comments: {}".format(json_response))
         except Exception:
-            logger.error("could not parse json!")
+            logger.error("could not parse json: {}".format(response))
         return []
     
     def get_json_comments_str(self, comments: list[Comment]) -> str:
         output = {}
         for comment in comments:
             output[comment.id] = comment.get_json_body()
-        return json.dumps(output, ensure_ascii=False)
+        return json.dumps(output)
