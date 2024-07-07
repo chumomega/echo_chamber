@@ -4,6 +4,7 @@ import json
 import logging
 from os import environ 
 from string import Template
+import re
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -63,15 +64,16 @@ class GeminiClient:
         """
         prompt_template = Template(prompt)
         complete_prompt_request = prompt_template.substitute(political_labels=political_labels_json, comments=json_comments)
-        # formatted_str = " {} | {}".format(political_labels_json, json_comments)
-        logger.info(f"test formatted str: {str(complete_prompt_request)}")
-        # return []
         response = self.get_response_from_ai(complete_prompt_request)
         try:
-            json_response = json.loads(response)
+            json_begin_index = response.find("{")
+            json_end_index = response.rfind("}")
+            json_str = response[json_begin_index-1:json_end_index+1]
+            logger.info("Gemini Response: {}".format(json_str))
+            json_response = json.loads(json_str)
             logger.info("Successfully parsed Gemini labels for comments: {}".format(json_response))
         except Exception:
-            logger.error("could not parse json: {}".format(response))
+            logger.error("could not parse json: {}".format(json_str))
         return []
     
     def get_json_comments_str(self, comments: list[Comment]) -> str:
