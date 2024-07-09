@@ -64,11 +64,15 @@ def get_youtube_chamber_members(identifier: str) -> Chamber:
     # if chamber_from_db is not None:
     #     return chamber_from_db
     
+    firebase_client = get_firebase()
     youtube_client = get_youtube()
     video_comments = youtube_client.get_video_comments(identifier)
 
     gemini_client = get_gemini()
-    gemini_client.get_labels_for_comments(video_comments)
+    comments_with_labels = gemini_client.get_labels_for_comments(video_comments)
+    
+    for comment in comments_with_labels:
+        firebase_client.add_chamber_member(identifier, ChamberType.YOUTUBE, comment)
 
     # firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
     return video_comments

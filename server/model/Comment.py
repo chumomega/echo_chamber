@@ -26,6 +26,9 @@ class Comment:
     def get_id(self) -> str:
         return self.id
     
+    def set_label_magnitudes(self, label_magnitudes: dict) -> None:
+        self.label_magnitudes = label_magnitudes
+    
     def get_json_body(self) -> dict:
         body = {
             "created_timestamp": self.created_timestamp,
