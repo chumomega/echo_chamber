@@ -2,4 +2,8 @@
 .venv
 venv/
 .env
+__pycache__/
+lib/
+pyvenv.cfg
+*.log
 node_modules/
