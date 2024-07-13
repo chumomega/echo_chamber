@@ -8,6 +8,6 @@ def test_validateInput():
 
     with pytest.raises(Exception):
         validateInput("abc", None)
-    
+
     with pytest.raises(Exception):
         validateInput(None, "youtube")
