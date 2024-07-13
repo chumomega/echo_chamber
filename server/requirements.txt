@@ -1,5 +1,6 @@
 annotated-types==0.7.0
 asttokens==2.4.1
+black==24.4.2
 blinker==1.8.2
 CacheControl==0.14.0
 cachetools==5.3.3
@@ -39,9 +40,12 @@ Jinja2==3.1.4
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.7
 msgpack==1.0.8
+mypy-extensions==1.0.0
 packaging==24.1
 parso==0.8.4
+pathspec==0.12.1
 pexpect==4.9.0
+platformdirs==4.2.2
 pluggy==1.5.0
 prompt_toolkit==3.0.47
 proto-plus==1.23.0
