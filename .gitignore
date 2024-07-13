@@ -7,4 +7,5 @@ lib/
 pyvenv.cfg
 *.log
 node_modules/
+
 praw.ini
