@@ -19,8 +19,9 @@ More information on the tool's background can be found here: https://docs.google
 ## Getting Started Backend
 - Navigate to root directory for server `cd ./server`
 - Make sure you've installed dependencies `pip install -r ./requirements.txt`
+- Create a .env file in the `./server/` directory so the server can access external services 
 - Run `gunicorn main:app` from the root dir to run the server
-- Go to `http://127.0.0.1:8000` to inspect 
+- Go to `http://127.0.0.1:8000` to inspect
 
 ## Build and Deploy
 - Run `gcloud builds submit --tag gcr.io/echo-chamber-427700/echochamber` to build container image
