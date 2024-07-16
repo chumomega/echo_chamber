@@ -2,6 +2,7 @@ from flask import request, Blueprint
 from model.factories.ChamberFactory import ChamberFactory
 from model.factories.ChamberMemberFactory import ChamberMemberFactory
 from model.ChamberType import ChamberType
+from flask import jsonify
 import logging
 import lorem
 
@@ -22,9 +23,13 @@ def get_echo_chamber_reasoning():
     chamber_x = ChamberFactory().get_chamber(identifier=identifier, chamber_type=chamber_type)
     chamber_members = ChamberMemberFactory().get_youtube_chamber_members(identifier=identifier)
     
-    return {
+    data = {
         "chamberReasoning": lorem.paragraph()
     }
+    response = jsonify(data)
+    # TODO Replace with your frontend origin
+    response.headers['Access-Control-Allow-Origin'] = 'chrome-extension://cpajadlkkpanknggmggdbeiechbhfkeh'
+    return response
 
 
 def validateInput(identifier: str, chamber_type: str) -> None:
