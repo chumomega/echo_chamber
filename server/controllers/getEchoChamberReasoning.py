@@ -1,4 +1,5 @@
 from flask import request, Blueprint
+from os import environ
 from model.factories.ChamberFactory import ChamberFactory
 from model.factories.ChamberMemberFactory import ChamberMemberFactory
 from model.ChamberType import ChamberType
@@ -28,7 +29,7 @@ def get_echo_chamber_reasoning():
     }
     response = jsonify(data)
     # TODO Replace with your frontend origin
-    response.headers['Access-Control-Allow-Origin'] = 'chrome-extension://cpajadlkkpanknggmggdbeiechbhfkeh'
+    response.headers['Access-Control-Allow-Origin'] = environ.get("CLIENT_ORIGIN")
     return response
 
 
