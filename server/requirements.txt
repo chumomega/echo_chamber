@@ -37,6 +37,7 @@ ipython==8.18.1
 itsdangerous==2.2.0
 jedi==0.19.1
 Jinja2==3.1.4
+lorem==0.1.1
 MarkupSafe==2.1.5
 matplotlib-inline==0.1.7
 msgpack==1.0.8
