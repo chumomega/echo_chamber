@@ -1,7 +1,7 @@
 from flask import request, Blueprint
-from model.ChamberType import ChamberType
 from model.factories.ChamberFactory import ChamberFactory
 from model.factories.ChamberMemberFactory import ChamberMemberFactory
+from model.ChamberType import ChamberType
 import logging
 
 
@@ -17,25 +17,19 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@echo_chamber_info_routes.route("/getEchoChamberStatus")
-def get_echo_chamber_status():
+@echo_chamber_info_routes.route("/getEchoChamberReasoning")
+def get_echo_chamber_reasoning():
     identifier = request.args.get("identifier")
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
 
     chamber_x = ChamberFactory().get_chamber(identifier=identifier, chamber_type=chamber_type)
     chamber_members = ChamberMemberFactory().get_youtube_chamber_members(identifier=identifier)
-    # TODO - get_chamber_labels(commentThreads) -> list:
-    # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
-
-    # text_api = TextAPI(GEMINI_API_KEY)
-    # text_api.get_response_from_ai("what is your name?")
+    
     return {
-        "isChamber": True,
-        "chamberLabel": "right-wing",
-        "chamberMagnitude": 9,
-        "chamberReasoning": 1,
+        "chamberReasoning": ""
     }
+
 
 def validateInput(identifier: str, chamber_type: str) -> None:
     if identifier is None or identifier == "":
