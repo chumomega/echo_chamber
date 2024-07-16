@@ -10,15 +10,10 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # Create a blueprint with a name and import name
-echo_chamber_info_routes = Blueprint("echo_chamber_info_routes", __name__)
+echo_chamber_reasoning_routes = Blueprint("echo_chamber_reasoning_routes", __name__)
 
 
-@echo_chamber_info_routes.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
-@echo_chamber_info_routes.route("/getEchoChamberReasoning")
+@echo_chamber_reasoning_routes.route("/getEchoChamberReasoning")
 def get_echo_chamber_reasoning():
     identifier = request.args.get("identifier")
     chamber_type = request.args.get("chamber_type")
