@@ -6,11 +6,10 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
 class ChamberFactory:
 
-    def __init__(
-        self
-    ) -> None:
+    def __init__(self) -> None:
         return
 
     def get_chamber(self, identifier: str, chamber_type: str) -> Chamber:
@@ -19,7 +18,6 @@ class ChamberFactory:
                 return self.get_youtube_chamber(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
-
 
     def get_youtube_chamber(self, identifier: str) -> Chamber:
         firebase_client = get_firebase()

@@ -23,8 +23,12 @@ def get_echo_chamber_status():
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
 
-    chamber_x = ChamberFactory().get_chamber(identifier=identifier, chamber_type=chamber_type)
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(identifier=identifier)
+    chamber_x = ChamberFactory().get_chamber(
+        identifier=identifier, chamber_type=chamber_type
+    )
+    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
+        identifier=identifier
+    )
     # TODO - get_chamber_labels(commentThreads) -> list:
     # TODO - get_aggregated_chamber_status(chamber_labels) -> dict:
 
@@ -36,6 +40,7 @@ def get_echo_chamber_status():
         "chamberMagnitude": 9,
         "chamberReasoning": 1,
     }
+
 
 def validateInput(identifier: str, chamber_type: str) -> None:
     if identifier is None or identifier == "":

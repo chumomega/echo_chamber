@@ -6,11 +6,10 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
 class ChamberMemberFactory:
 
-    def __init__(
-        self
-    ) -> None:
+    def __init__(self) -> None:
         return
 
     def get_chamber_members(self, identifier: str, chamber_type: str) -> list[Comment]:

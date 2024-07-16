@@ -21,15 +21,17 @@ def get_echo_chamber_reasoning():
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
 
-    chamber_x = ChamberFactory().get_chamber(identifier=identifier, chamber_type=chamber_type)
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(identifier=identifier)
-    
-    data = {
-        "chamberReasoning": lorem.paragraph()
-    }
+    chamber_x = ChamberFactory().get_chamber(
+        identifier=identifier, chamber_type=chamber_type
+    )
+    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
+        identifier=identifier
+    )
+
+    data = {"chamberReasoning": lorem.paragraph()}
     response = jsonify(data)
     # TODO Replace with your frontend origin
-    response.headers['Access-Control-Allow-Origin'] = environ.get("CLIENT_ORIGIN")
+    response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")
     return response
 
 
