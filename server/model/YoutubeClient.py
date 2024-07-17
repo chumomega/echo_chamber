@@ -7,7 +7,6 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-YOUTUBE_DATA_API_KEY = environ.get("YOUTUBE_DATA_API_KEY")
 MAX_OPINIONS = 5
 
 
