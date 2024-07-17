@@ -62,6 +62,12 @@ class FirebaseClient:
             label_magnitudes=chamber_response.get("label_magnitudes", None),
         )
 
+    def update_chamber_label_magnitudes(self, identifier: str, chamber_type: ChamberType, label_magnitudes: dict) -> Chamber:
+        ref = db.reference(
+            CHAMBERS_TABLE + "/{}/{}/{}".format(chamber_type.value, identifier, "label_magnitudes")
+        )
+        ref.update(label_magnitudes)
+
     def get_chamber_members(
         self, identifier: str, chamber_type: ChamberType
     ) -> list[Comment]:

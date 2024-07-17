@@ -27,7 +27,6 @@ def get_echo_chamber_reasoning():
     chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
         identifier=identifier
     )
-
     data = {"chamberReasoning": lorem.paragraph()}
     response = jsonify(data)
     # TODO Replace with your frontend origin
