@@ -1,4 +1,6 @@
 import time
+from typing import TypedDict
+from model.LabelMagnitudes import PoliticalLabelMagnitudes
 
 
 class Comment:
@@ -14,7 +16,7 @@ class Comment:
         text: str,
         author: str,
         created_timestamp: float = time.time(),
-        label_magnitudes: dict = None,
+        label_magnitudes: PoliticalLabelMagnitudes = None,
     ) -> None:
 
         self.id = id
@@ -27,10 +29,10 @@ class Comment:
     def get_id(self) -> str:
         return self.id
 
-    def set_label_magnitudes(self, label_magnitudes: dict) -> None:
+    def set_label_magnitudes(self, label_magnitudes: PoliticalLabelMagnitudes) -> None:
         self.label_magnitudes = label_magnitudes
 
-    def get_label_magnitudes(self) -> dict:
+    def get_label_magnitudes(self) -> PoliticalLabelMagnitudes:
         return self.label_magnitudes
 
     def get_json_body(self) -> dict:

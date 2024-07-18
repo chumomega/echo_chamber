@@ -25,7 +25,7 @@ def get_echo_chamber_status():
     identifier = request.args.get("identifier")
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
-    
+
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
@@ -35,7 +35,9 @@ def get_echo_chamber_status():
     chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
     firebase_client = get_firebase()
     firebase_client.update_chamber_label_magnitudes(
-        identifier=identifier, chamber_type=ChamberType.YOUTUBE, label_magnitudes=chamber_label_magnitudes
+        identifier=identifier,
+        chamber_type=ChamberType.YOUTUBE,
+        label_magnitudes=chamber_label_magnitudes,
     )
 
     biased_chamber = get_biased_chamber(chamber_label_magnitudes)
@@ -43,7 +45,7 @@ def get_echo_chamber_status():
     data = {
         "isBiasedChamber": True if biased_chamber != None else False,
         "chamberLabelMagnitudes": chamber_label_magnitudes,
-        "biasedChamber": biased_chamber
+        "biasedChamber": biased_chamber,
     }
     response = jsonify(data)
     # TODO Replace with your frontend origin

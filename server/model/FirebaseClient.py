@@ -3,6 +3,7 @@ from model.Chamber import Chamber
 from model.Comment import Comment
 from model.ChamberType import ChamberType
 import logging
+from model.LabelMagnitudes import PoliticalLabelMagnitudes
 
 CHAMBERS_TABLE = "tables/chambers"
 CHAMBER_MEMBERS_TABLE = "tables/chamber_members"
@@ -62,9 +63,15 @@ class FirebaseClient:
             label_magnitudes=chamber_response.get("label_magnitudes", None),
         )
 
-    def update_chamber_label_magnitudes(self, identifier: str, chamber_type: ChamberType, label_magnitudes: dict) -> Chamber:
+    def update_chamber_label_magnitudes(
+        self,
+        identifier: str,
+        chamber_type: ChamberType,
+        label_magnitudes: PoliticalLabelMagnitudes,
+    ) -> Chamber:
         ref = db.reference(
-            CHAMBERS_TABLE + "/{}/{}/{}".format(chamber_type.value, identifier, "label_magnitudes")
+            CHAMBERS_TABLE
+            + "/{}/{}/{}".format(chamber_type.value, identifier, "label_magnitudes")
         )
         ref.update(label_magnitudes)
 

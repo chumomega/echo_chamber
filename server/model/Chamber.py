@@ -1,4 +1,5 @@
 import time
+from model.LabelMagnitudes import PoliticalLabelMagnitudes
 
 
 class Chamber:
@@ -16,7 +17,7 @@ class Chamber:
         description: str,
         author: str,
         created_timestamp: float = time.time(),
-        label_magnitudes: dict = None,
+        label_magnitudes: PoliticalLabelMagnitudes = None,
     ) -> None:
 
         self.id = id

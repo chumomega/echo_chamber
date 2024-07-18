@@ -37,7 +37,7 @@ class GeminiClient:
         )  # stream=True fails
         return response.text
 
-    def get_labels_for_comments(self, comments: list[Comment]):
+    def get_labels_for_comments(self, comments: list[Comment]) -> list[Comment]:
         political_labels_json = json.dumps(POLITICAL_LABELS)
         json_comments = self.get_json_comments_str(comments)
         prompt = """
