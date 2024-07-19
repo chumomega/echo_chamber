@@ -44,6 +44,6 @@ def get_avg_label_magnitude(
 
 def get_biased_chamber(chamber_label_magnitudes: PoliticalLabelMagnitudes) -> str:
     largest_label = max(chamber_label_magnitudes.items(), key=operator.itemgetter(1))[0]
-    if chamber_label_magnitudes[largest_label] > 4:
+    if largest_label != "moderate" and chamber_label_magnitudes[largest_label] > 4:
         return largest_label
     return None
