@@ -1,44 +1,77 @@
-console.log("This is the javascript")
+
+
+const DESKTOP_YOUTUBE_VIDEO_REGEX = /^(https\:\/\/www\.youtube\.com\/watch\?v=){1}.+/;
+
+const isDesktopYoutubeUrl = (searchQuery) => {
+    return DESKTOP_YOUTUBE_VIDEO_REGEX.test(searchQuery);
+}
+
+const getPodcastIdFromDesktopYoutubeVideoUrl = (desktopYoutubeUrl) => {
+    let urlSearchParamsStart = desktopYoutubeUrl.indexOf('?')
+    let urlSearchParams = desktopYoutubeUrl.substring(urlSearchParamsStart)
+    return (new URLSearchParams(urlSearchParams)).get('v');
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const chamberStatusElement = document.getElementById('chamberStatus');
     const chamberReasoningButtonElement = document.getElementById('chamberReasoningButton');
     const chamberStatusGroupElement = document.getElementById('chamberStatusGroup');
-    fetchChamberStatus(chamberStatusElement, chamberReasoningButtonElement, chamberStatusGroupElement).then(
-        (data) => {
-            var chamberStatusContent = null
-            var buttonContent = null
-            if (data.isBiasedChamber) {
-                chamberStatusContent = `
-                    This is most likely a ${data.biasedChamber} 
-                    echo chamber by ${getChamberPercentage(data.biasedChamber, 
-                        data.chamberLabelMagnitudes)}%`;
-                buttonContent = "Why is this an echo chamber?"
-            } else {
-                chamberStatusContent = "This is not a biased echo chamber";
-                buttonContent = "Why is this not echo chamber?"
-            }
-            
-            chamberStatusElement.textContent = chamberStatusContent
-            chamberReasoningButtonElement.textContent = buttonContent
-            chamberStatusGroupElement.style.display = '';
-        }
-    )
 
-    const chamberReasoningElement = document.getElementById('chamberReasoning');
-    const chamberReasoningGroupElement = document.getElementById('chamberReasoningGroup');
-    chamberReasoningButtonElement.addEventListener('click', function () {
-        fetchChamberReasoning(chamberReasoningElement, chamberReasoningGroupElement).then(
-            (data) => {
-                chamberReasoningElement.textContent = data.chamberReasoning;
-                chamberReasoningGroupElement.style.display = '';
-            }
-        )
+    getIdentifierAndType().then(
+        ({ identifier, type }) => {
+            fetchChamberStatus(identifier, type).then(
+                (data) => {
+                    var chamberStatusContent = null
+                    var buttonContent = null
+                    if (data.isBiasedChamber) {
+                        chamberStatusContent = `
+                            This is most likely a ${data.biasedChamber} 
+                            echo chamber by ${getChamberPercentage(data.biasedChamber, 
+                                data.chamberLabelMagnitudes)}%`;
+                        buttonContent = "Why is this an echo chamber?"
+                    } else {
+                        chamberStatusContent = "This is not a biased echo chamber";
+                        buttonContent = "Why is this not echo chamber?"
+                    }
+                    
+                    chamberStatusElement.textContent = chamberStatusContent
+                    chamberReasoningButtonElement.textContent = buttonContent
+                    chamberStatusGroupElement.style.display = '';
+                }
+            )
+
+            const chamberReasoningElement = document.getElementById('chamberReasoning');
+            const chamberReasoningGroupElement = document.getElementById('chamberReasoningGroup');
+            chamberReasoningButtonElement.addEventListener('click', function () {
+                fetchChamberReasoning(identifier, type).then(
+                    (data) => {
+                        chamberReasoningElement.textContent = data.chamberReasoning;
+                        chamberReasoningGroupElement.style.display = '';
+                    }
+                )
+            });
+        }
+    ).catch(error => {
+        console.error("Error: ", error);
     });
 });
 
-async function fetchChamberStatus() {
-    const url = "http://127.0.0.1:8000/getEchoChamberStatus?identifier=OPK7wbZkx8w&chamber_type=youtube";
+async function getIdentifierAndType() {
+    const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+    let identifier = null
+    let type = null
+    if (isDesktopYoutubeUrl(tab.url)) {
+        identifier = getPodcastIdFromDesktopYoutubeVideoUrl(tab.url)
+        type = "youtube"
+    } else {
+        throw("Supported Platform content not found")
+    }
+    return {identifier, type}
+}
+
+async function fetchChamberStatus(identifier, type) {
+    console.log("fetchChamberStatus called")
+    const url = `http://127.0.0.1:8000/getEchoChamberStatus?identifier=${identifier}&chamber_type=${type}`;
   
     try {
       const response = await fetch(url);
@@ -57,9 +90,9 @@ function getChamberPercentage(chamber, chamberLabelMagnitudes) {
     return ((chamberLabelMagnitudes[chamber]/sum) * 100).toFixed(2)
 }
 
-async function fetchChamberReasoning() {
+async function fetchChamberReasoning(identifier, type) {
     console.log("fetchChamberReasoning called")
-    const url = "http://127.0.0.1:8000/getEchoChamberReasoning?identifier=OPK7wbZkx8w&chamber_type=youtube";
+    const url = `http://127.0.0.1:8000/getEchoChamberReasoning?identifier=${identifier}&chamber_type=${type}`;
   
     try {
       const response = await fetch(url);
