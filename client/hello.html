@@ -3,15 +3,19 @@
 <head>
     <title>Echo Chamber Dummy Dashboard</title>
     <script src="lib/chart.min.js"></script>
-    <script src="popup.js"></script>
 </head>
 <body>
-    <div style="width: 400px">
+    <div style="width: 400px; height: 400px">
         <h1>Hello!</h1>
-        <button id="chamberReasoningButton">Why is this an echo chamber?</button>
-
-        <p id="chamberReasoning">
+        <div id="chamberStatusGroup" style="display: none;">
+            <p id="chamberStatus"></p>
+            <button id="chamberReasoningButton">This shouldn't be here</button>
+        </div>
+        <div id="chamberReasoningGroup" style="display: none;">
+            <p id="chamberReasoning">This shouldn't be here</p>
+        </div>
     </div>
     <!-- <canvas id="myChart" width="400" height="400"></canvas> -->
+    <script src="popup.js"></script>
 </body>
 </html>
