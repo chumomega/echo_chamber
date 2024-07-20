@@ -2,7 +2,7 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/echo-chamber-427700/echochamber:latest', './server']
-  bases: ['python:3.11']  # Specify Python 3.11 base image
+  # bases: ['python:3.11']  # Specify Python 3.11 base image
 
 # Optional: Push the image to GCR (replace with your preferred image location)
 - name: 'gcr.io/cloud-builders/gcloud'
