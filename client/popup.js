@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const chamberReasoningButtonElement = document.getElementById('chamberReasoningButton');
     const chamberStatusGroupElement = document.getElementById('chamberStatusGroup');
     fetchChamberStatus(chamberStatusElement, chamberReasoningButtonElement, chamberStatusGroupElement)
+
+    const chamberReasoningElement = document.getElementById('chamberReasoning');
+    const chamberReasoningGroupElement = document.getElementById('chamberReasoningGroup');
+    chamberReasoningButtonElement.addEventListener('click', function () {
+        fetchChamberReasoning(chamberReasoningElement, chamberReasoningGroupElement)
+    });
 });
 
 async function fetchChamberStatus(chamberStatusElement, chamberReasoningButtonElement, chamberStatusGroupElement) {
@@ -43,23 +49,18 @@ function getChamberPercentage(chamber, chamberLabelMagnitudes) {
     return ((chamberLabelMagnitudes[chamber]/sum) * 100).toFixed(2)
 }
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     const button = document.getElementById('chamberReasoningButton');
-//     const chamberReasoningElement = document.getElementById('chamberReasoning');
-//     button.addEventListener('click', function () {
-//         fetchChamberReasoning(chamberReasoningElement)
-//     });
-// });
-
-// async function fetchChamberReasoning(textElement) {
-//     const url = "http://127.0.0.1:8000/getEchoChamberReasoning?identifier=OPK7wbZkx8w&chamber_type=youtube";
+async function fetchChamberReasoning(chamberReasoningElement, chamberReasoningGroupElement) {
+    console.log("fetchChamberReasoning called")
+    const url = "http://127.0.0.1:8000/getEchoChamberReasoning?identifier=OPK7wbZkx8w&chamber_type=youtube";
   
-//     try {
-//       const response = await fetch(url);
-//       const data = await response.json(); // Parse the JSON response
-//       textElement.textContent = data.chamberReasoning;
-//     } catch (error) {
-//       console.error("Error fetching data:", error);
-//     }
-// }
+    try {
+      const response = await fetch(url);
+      const data = await response.json(); // Parse the JSON response
+      chamberReasoningElement.textContent = data.chamberReasoning;
+      chamberReasoningGroupElement.style.display = '';
+      return
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+}
   
