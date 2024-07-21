@@ -1,5 +1,5 @@
-
-
+// Use "http://127.0.0.1:8000" in dev and https://echochamber-mtxmtj5oba-ue.a.run.app/ in prod
+const SERVER_URL = "https://echochamber-mtxmtj5oba-ue.a.run.app/"
 const DESKTOP_YOUTUBE_VIDEO_REGEX = /^(https\:\/\/www\.youtube\.com\/watch\?v=){1}.+/;
 
 const isDesktopYoutubeUrl = (searchQuery) => {
@@ -71,7 +71,7 @@ async function getIdentifierAndType() {
 
 async function fetchChamberStatus(identifier, type) {
     console.log("fetchChamberStatus called")
-    const url = `http://127.0.0.1:8000/getEchoChamberStatus?identifier=${identifier}&chamber_type=${type}`;
+    const url = `${SERVER_URL}/getEchoChamberStatus?identifier=${identifier}&chamber_type=${type}`;
   
     try {
       const response = await fetch(url);
@@ -92,7 +92,7 @@ function getChamberPercentage(chamber, chamberLabelMagnitudes) {
 
 async function fetchChamberReasoning(identifier, type) {
     console.log("fetchChamberReasoning called")
-    const url = `http://127.0.0.1:8000/getEchoChamberReasoning?identifier=${identifier}&chamber_type=${type}`;
+    const url = `${SERVER_URL}/getEchoChamberReasoning?identifier=${identifier}&chamber_type=${type}`;
   
     try {
       const response = await fetch(url);
