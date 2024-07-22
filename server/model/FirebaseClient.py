@@ -51,15 +51,11 @@ class FirebaseClient:
         self, chamber_identifier: str, chamber_type: ChamberType, tags: list[str]
     ) -> None:
         logger.info(f"Storing tags for {chamber_identifier} in Firebase...")
-        chamber_tags_ref = db.reference (
+        chamber_tags_ref = db.reference(
             CHAMBER_TAGS_TABLE + "/{}/{}".format(chamber_type.value, chamber_identifier)
         )
         for tag in tags:
-            tags_ref = (
-                db.reference(TAGS_TABLE)
-                .child(chamber_type.value)
-                .child(tag)
-            )
+            tags_ref = db.reference(TAGS_TABLE).child(chamber_type.value).child(tag)
             tags_ref.child(chamber_identifier).set(True)
             chamber_tags_ref.child(tag).set(True)
 
@@ -131,10 +127,8 @@ class FirebaseClient:
 
         return full_chamber_member_data
 
-    def get_chamber_tags(
-        self, identifier: str, chamber_type: ChamberType
-    ) -> list[str]:
-        chamber_tags_ref = db.reference (
+    def get_chamber_tags(self, identifier: str, chamber_type: ChamberType) -> list[str]:
+        chamber_tags_ref = db.reference(
             CHAMBER_TAGS_TABLE + "/{}/{}".format(chamber_type.value, identifier)
         )
         chamber_tags: dict = chamber_tags_ref.get()

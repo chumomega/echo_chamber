@@ -29,3 +29,14 @@ class ChamberFactory:
         chamber = youtube_client.get_video_chamber(identifier)
         firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
         return chamber
+
+    def get_similar_chamber(self, identifier: str) -> Chamber:
+        firebase_client = get_firebase()
+        chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.YOUTUBE)
+        if chamber_from_db is not None:
+            return chamber_from_db
+
+        youtube_client = get_youtube()
+        chamber = youtube_client.get_video_chamber(identifier)
+        firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
+        return chamber

@@ -92,8 +92,10 @@ class GeminiClient:
             if comment.get_id() in comment_labels:
                 comment.set_label_magnitudes(comment_labels[comment.get_id()])
         return comments
-    
-    def get_tags_for_chamber(self, chamber: Chamber, comments: list[Comment]) -> list[Comment]:
+
+    def get_tags_for_chamber(
+        self, chamber: Chamber, comments: list[Comment]
+    ) -> list[Comment]:
         content_json = chamber.get_json_body_for_tags()
         content_comments_json = self.get_json_comments_str_for_tags(comments)
         prompt = """

@@ -46,7 +46,6 @@ class Comment:
             body["label_magnitudes"] = self.label_magnitudes
 
         return body
-    
 
     def get_json_body_for_tags(self) -> dict:
         return {

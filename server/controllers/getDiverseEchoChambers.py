@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # Create a blueprint with a name and import name
-echo_chamber_recommendation_routes = Blueprint("echo_chamber_recommendation_routes", __name__)
+echo_chamber_recommendation_routes = Blueprint(
+    "echo_chamber_recommendation_routes", __name__
+)
 
 
 @echo_chamber_recommendation_routes.route("/getDiverseEchoChambers")
@@ -25,6 +27,11 @@ def get_diverse_echo_chambers():
     chamber_tags = ChamberTagFactory().get_chamber_tags(
         identifier=identifier, chamber_type=chamber_type
     )
+
+    chamber_tags = ChamberFactory().get_chamber_tags(
+        identifier=identifier, chamber_type=chamber_type
+    )
+
     data = {"chamberTags": chamber_tags}
     response = jsonify(data)
     # TODO Replace with your frontend origin
