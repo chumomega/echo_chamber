@@ -24,7 +24,7 @@ def get_echo_chamber_reasoning():
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
+    chamber_members = ChamberMemberFactory().get_chamber_members(
         identifier=identifier
     )
     data = {"chamberReasoning": lorem.paragraph()}

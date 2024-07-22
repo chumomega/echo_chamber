@@ -15,11 +15,11 @@ class ChamberMemberFactory:
     def get_chamber_members(self, identifier: str, chamber_type: str) -> list[Comment]:
         match chamber_type:
             case ChamberType.YOUTUBE.value:
-                return self.get_youtube_chamber_members(identifier)
+                return self.__get_youtube_chamber_members(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
-    def get_youtube_chamber_members(self, identifier: str) -> list[Comment]:
+    def __get_youtube_chamber_members(self, identifier: str) -> list[Comment]:
         firebase_client = get_firebase()
         youtube_client = get_youtube()
 

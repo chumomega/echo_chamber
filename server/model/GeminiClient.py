@@ -134,7 +134,7 @@ class GeminiClient:
         except Exception:
             logger.error("could not parse tags list: {}".format(response))
 
-        return tags
+        return [tag.strip() for tag in tags]
 
     def get_json_comments_str(self, comments: list[Comment]) -> str:
         output = {}

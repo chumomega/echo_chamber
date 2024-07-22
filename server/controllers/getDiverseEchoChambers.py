@@ -22,16 +22,10 @@ def get_diverse_echo_chambers():
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
 
-    chamber_x = ChamberFactory().get_chamber(
+    chamber_tags = ChamberTagFactory().get_chamber_tags(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_chamber_members(
-        identifier=identifier
-    )
-    chamber_tags = ChamberTagFactory().get_chamber_tags()
-    gemini_client = get_gemini()
-    tags = gemini_client.get_tags_for_chamber(chamber=chamber_x, comments=chamber_members)
-    data = {"chamberTags": tags}
+    data = {"chamberTags": chamber_tags}
     response = jsonify(data)
     # TODO Replace with your frontend origin
     response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")

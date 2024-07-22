@@ -29,7 +29,7 @@ def get_echo_chamber_status():
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
+    chamber_members = ChamberMemberFactory().get_chamber_members(
         identifier=identifier
     )
     chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
