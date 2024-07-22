@@ -46,6 +46,13 @@ class Comment:
             body["label_magnitudes"] = self.label_magnitudes
 
         return body
+    
+
+    def get_json_body_for_tags(self) -> dict:
+        return {
+            "text": self.text,
+            "author": self.author,
+        }
 
     def __str__(self):
         return f"Comment(id='{self.id}', text='{self.text}', author='{self.author}', \

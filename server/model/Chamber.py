@@ -43,6 +43,13 @@ class Chamber:
             body["label_magnitudes"] = self.label_magnitudes
 
         return body
+    
+    def get_json_body_for_tags(self) -> dict:
+        return {
+            "description": self.description,
+            "title": self.title,
+            "author": self.author,
+        }
 
     def __str__(self):
         return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \

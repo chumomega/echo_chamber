@@ -1,5 +1,6 @@
 import google.generativeai as genai
 from model.Comment import Comment
+from model.Chamber import Chamber
 import json
 import logging
 from os import environ
@@ -91,9 +92,58 @@ class GeminiClient:
             if comment.get_id() in comment_labels:
                 comment.set_label_magnitudes(comment_labels[comment.get_id()])
         return comments
+    
+    def get_tags_for_chamber(self, chamber: Chamber, comments: list[Comment]) -> list[Comment]:
+        content_json = chamber.get_json_body_for_tags()
+        content_comments_json = self.get_json_comments_str_for_tags(comments)
+        prompt = """
+            Put your data analyst/labeler hat on.
+
+            I'm going to give you a piece of content, "content", and some commentary on it, "content_comments".
+            Please provide me with a list of labels or tags that best describe it. An example style of output that
+            I expect is below as "example_output"
+
+            Tagging Guidelines:
+            - Please do not provide more than 7 tags
+            - Please make sure every tag is lowercase
+            - Please make sure every tag is a single word
+            - Please avoid punctiation and capitalization
+            - Please exclude common words like "the" or "and"
+            - Please prioritize descriptive keywords over proper nouns
+            - Please represent compound words as a signle word
+            - Please represent numbers in tags as digits insead of words ie - 2 instead of two
+            - Please provide response as comma delimited list surrunded by square brackets
+
+            "content": $content
+            "content_comments": $content_comments
+            "example_output": [politics,2024,election,digitalmedia,comedy]
+        """
+        logger.info(f"Retrieving tags from Gemini...")
+        prompt_template = Template(prompt)
+        complete_prompt_request = prompt_template.substitute(
+            content=content_json, content_comments=content_comments_json
+        )
+        response = self.get_response_from_ai(complete_prompt_request)
+        tags = []
+        # Parse Json Response from Gemini
+        try:
+            json_begin_index = response.find("[")
+            json_end_index = response.rfind("]")
+            list_str = response[json_begin_index + 1 : json_end_index]
+            tags = list_str.split(",")
+        except Exception:
+            logger.error("could not parse tags list: {}".format(response))
+
+        return tags
 
     def get_json_comments_str(self, comments: list[Comment]) -> str:
         output = {}
         for comment in comments:
             output[comment.id] = comment.get_json_body()
+        return json.dumps(output)
+
+    def get_json_comments_str_for_tags(self, comments: list[Comment]) -> str:
+        output = {}
+        for comment in comments:
+            output[comment.id] = comment.get_json_body_for_tags()
         return json.dumps(output)
