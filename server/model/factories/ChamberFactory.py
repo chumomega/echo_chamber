@@ -15,11 +15,15 @@ class ChamberFactory:
     def get_chamber(self, identifier: str, chamber_type: str) -> Chamber:
         match chamber_type:
             case ChamberType.YOUTUBE.value:
-                return self.get_youtube_chamber(identifier)
+                return self._get_youtube_chamber(identifier)
+            case ChamberType.REDDIT.value:
+                return self._get_reddit_chamber(identifier)
+            case ChamberType.X.value:
+                return self._get_x_chamber(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
-    def get_youtube_chamber(self, identifier: str) -> Chamber:
+    def _get_youtube_chamber(self, identifier: str) -> Chamber:
         firebase_client = get_firebase()
         chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.YOUTUBE)
         if chamber_from_db is not None:
@@ -29,3 +33,9 @@ class ChamberFactory:
         chamber = youtube_client.get_video_chamber(identifier)
         firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
         return chamber
+
+    def _get_reddit_chamber(self, identifier: str) -> Chamber:
+        raise NotImplementedError
+    
+    def _get_x_chamber(self, identifier: str) -> Chamber:
+        raise NotImplementedError

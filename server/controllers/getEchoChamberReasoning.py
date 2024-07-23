@@ -4,6 +4,7 @@ from model.factories.ChamberFactory import ChamberFactory
 from model.factories.ChamberMemberFactory import ChamberMemberFactory
 from model.ChamberType import ChamberType
 from flask import jsonify
+from context_initializers import get_gemini
 import logging
 import lorem
 
@@ -20,14 +21,15 @@ def get_echo_chamber_reasoning():
     identifier = request.args.get("identifier")
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
-
+    
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
-        identifier=identifier
+    chamber_members = ChamberMemberFactory().get_chamber_members(
+        identifier=identifier, chamber_type=chamber_type
     )
-    data = {"chamberReasoning": lorem.paragraph()}
+    reasoning = get_gemini().get_reasoning_for_comments(chamber_members)
+    data = {"chamberReasoning": reasoning}
     response = jsonify(data)
     # TODO Replace with your frontend origin
     response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")

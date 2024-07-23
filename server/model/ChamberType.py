@@ -1,8 +1,10 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ChamberType(Enum):
+class ChamberType(StrEnum):
     YOUTUBE = "youtube"
+    REDDIT = "reddit"
+    X = "x"
 
     @classmethod
     def has_value(cls, value):

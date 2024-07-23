@@ -66,12 +66,12 @@ class FirebaseClient:
     def update_chamber_label_magnitudes(
         self,
         identifier: str,
-        chamber_type: ChamberType,
+        chamber_type: str,
         label_magnitudes: PoliticalLabelMagnitudes,
     ) -> Chamber:
         ref = db.reference(
             CHAMBERS_TABLE
-            + "/{}/{}/{}".format(chamber_type.value, identifier, "label_magnitudes")
+            + "/{}/{}/{}".format(chamber_type, identifier, "label_magnitudes")
         )
         ref.update(label_magnitudes)
 

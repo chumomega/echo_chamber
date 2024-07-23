@@ -3,12 +3,6 @@ from model.LabelMagnitudes import PoliticalLabelMagnitudes
 
 
 class Chamber:
-    created_timestamp = None
-    description = None
-    author = None
-    id = None
-    label_magnitudes = None
-    title = None
 
     def __init__(
         self,

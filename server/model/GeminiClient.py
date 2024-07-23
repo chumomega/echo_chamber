@@ -62,7 +62,7 @@ class GeminiClient:
                 "nonPoliticalCommentId1": {
                     "communist": 0,
                     "leftist": 0,
-                    "liberal": 0,
+                    "liberal": 0,   
                     "moderate": 0,
                     "conservative": 0,
                     "nationalist": 0
@@ -91,6 +91,33 @@ class GeminiClient:
             if comment.get_id() in comment_labels:
                 comment.set_label_magnitudes(comment_labels[comment.get_id()])
         return comments
+
+    def get_reasoning_for_comments(self, comments: list[Comment]):
+        political_labels_json = json.dumps(POLITICAL_LABELS)
+        json_comments = [comment.text for comment in comments]
+        prompt = """
+            Put your data analyst/labeler hat on.
+
+            Please analyze all comments in the "input" provided and determine the overall sentiment based on labels from "fixed_labels".
+            Please provide a reasoning for the sentiment in a JSON format like: {'reasoning': output}
+
+            "fixed_labels": $political_labels
+            "input": $comments
+        """
+        prompt_template = Template(prompt)
+        complete_prompt_request = prompt_template.substitute(
+            political_labels=political_labels_json, comments=json_comments
+        )
+        response = self.get_response_from_ai(complete_prompt_request)
+        # Parse Json Response from Gemini
+        try:
+            json_begin_index = response.find("{")
+            json_end_index = response.rfind("}")
+            json_str = response[json_begin_index - 1 : json_end_index + 1]
+            j = json.loads(json_str)
+            return j["reasoning"]
+        except Exception:
+            logger.error("could not parse json: {}".format(response))
 
     def get_json_comments_str(self, comments: list[Comment]) -> str:
         output = {}

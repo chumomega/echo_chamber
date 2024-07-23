@@ -29,14 +29,14 @@ def get_echo_chamber_status():
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_youtube_chamber_members(
-        identifier=identifier
+    chamber_members = ChamberMemberFactory().get_chamber_members(
+        identifier=identifier, chamber_type=chamber_type
     )
     chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
     firebase_client = get_firebase()
     firebase_client.update_chamber_label_magnitudes(
         identifier=identifier,
-        chamber_type=ChamberType.YOUTUBE,
+        chamber_type=chamber_type,
         label_magnitudes=chamber_label_magnitudes,
     )
 
