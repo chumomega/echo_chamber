@@ -58,6 +58,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchChamberAlternatives(identifier, type).then(
                     (data) => {
                         console.log(`Diverse chambers: ${data.diverseChambers}`);
+                        data.diverseChambers.forEach(url => {
+                            const listItem = document.createElement('li');
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.textContent = url;
+                            link.target = "_blank";
+                            listItem.appendChild(link);
+                            chamberAlternativesElement.appendChild(listItem);
+                        })
+                        chamberAlternativesGroupElement.style.display = '';
                     }
                 )
             });
