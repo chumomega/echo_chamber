@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Echo Chamber",
-  "description": "Echo Chamber Extension: Good information for everyone",
+  "description": "Echo Chamber Extension: Diverse and balanced information for everyone",
   "version": "1.0",
-  "permissions": ["storage"],
+  "permissions": ["activeTab"],
   "action": {
     "default_popup": "hello.html",
-    "default_icon": "hello_extensions.png"
+    "default_icon": "echo-chamber-high-resolution-logo-small.png"
   }
 }
