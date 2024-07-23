@@ -8,8 +8,8 @@ from model.LabelMagnitudes import PoliticalLabelMagnitudes
 CHAMBERS_TABLE = "tables/chambers"
 CHAMBER_MEMBERS_TABLE = "tables/chamber_members"
 COMMENTS_TABLE = "tables/comments"
-COMMENT_TAGS_TABLE = "tables/comment_tags"
 TAGS_TABLE = "tables/tags"
+CHAMBER_TAGS_TABLE = "tables/chamber_tags"
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -47,6 +47,18 @@ class FirebaseClient:
         )
         chamber_members_ref.child(comment.get_id()).set(True)
 
+    def add_chamber_tags(
+        self, chamber_identifier: str, chamber_type: ChamberType, tags: list[str]
+    ) -> None:
+        logger.info(f"Storing tags for {chamber_identifier} in Firebase...")
+        chamber_tags_ref = db.reference(
+            CHAMBER_TAGS_TABLE + "/{}/{}".format(chamber_type.value, chamber_identifier)
+        )
+        for tag in tags:
+            tags_ref = db.reference(TAGS_TABLE).child(chamber_type.value).child(tag)
+            tags_ref.child(chamber_identifier).set(True)
+            chamber_tags_ref.child(tag).set(True)
+
     def get_chamber(self, identifier: str, chamber_type: ChamberType) -> Chamber:
         ref = db.reference(
             CHAMBERS_TABLE + "/{}/{}".format(chamber_type.value, identifier)
@@ -82,7 +94,6 @@ class FirebaseClient:
             CHAMBER_MEMBERS_TABLE + "/{}/{}".format(chamber_type.value, identifier)
         )
         chamber_members: dict = ref.get()
-        logger.info(f"The retrieved chamber members: {chamber_members}")
 
         if chamber_members is None or len(chamber_members) == 0:
             return []
@@ -115,3 +126,19 @@ class FirebaseClient:
                 )
 
         return full_chamber_member_data
+
+    def get_chamber_tags(self, identifier: str, chamber_type: ChamberType) -> list[str]:
+        chamber_tags_ref = db.reference(
+            CHAMBER_TAGS_TABLE + "/{}/{}".format(chamber_type.value, identifier)
+        )
+        chamber_tags: dict = chamber_tags_ref.get()
+
+        if chamber_tags is None or len(chamber_tags) == 0:
+            return []
+
+        tags = []
+        for chamber_tag, tag_value in chamber_tags.items():
+            if tag_value is True:
+                tags.append(chamber_tag)
+
+        return tags

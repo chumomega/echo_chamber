@@ -1,6 +1,7 @@
 from flask import Flask
 from controllers.getEchoChamberStatus import echo_chamber_info_routes
 from controllers.getEchoChamberReasoning import echo_chamber_reasoning_routes
+from controllers.getDiverseEchoChambers import echo_chamber_recommendation_routes
 import firebase_admin
 import logging
 from dotenv import load_dotenv
@@ -21,5 +22,6 @@ firebase_admin.initialize_app(
 )
 app.register_blueprint(echo_chamber_info_routes)
 app.register_blueprint(echo_chamber_reasoning_routes)
+app.register_blueprint(echo_chamber_recommendation_routes)
 
 # Gunicorn is used to run server
