@@ -16,37 +16,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const chamberStatusElement = document.getElementById('chamberStatus');
     const chamberReasoningButtonElement = document.getElementById('chamberReasoningButton');
     const chamberStatusGroupElement = document.getElementById('chamberStatusGroup');
+    const chamberAlternativesButtonElement = document.getElementById('chamberAlternativesButton');
 
     getIdentifierAndType().then(
         ({ identifier, type }) => {
             fetchChamberStatus(identifier, type).then(
                 (data) => {
                     var chamberStatusContent = null
-                    var buttonContent = null
+                    var chamberReasoningButtonContent = null
                     if (data.isBiasedChamber) {
                         chamberStatusContent = `
                             This is most likely a ${data.biasedChamber} 
                             echo chamber by ${getChamberPercentage(data.biasedChamber, 
                                 data.chamberLabelMagnitudes)}%`;
-                        buttonContent = "Why is this an echo chamber?"
+                        chamberReasoningButtonContent = "Why is this an echo chamber?"
                     } else {
                         chamberStatusContent = "This is not a biased echo chamber";
-                        buttonContent = "Why is this not echo chamber?"
+                        chamberReasoningButtonContent = "Why is this not echo chamber?";
                     }
                     
                     chamberStatusElement.textContent = chamberStatusContent
-                    chamberReasoningButtonElement.textContent = buttonContent
+                    chamberReasoningButtonElement.textContent = chamberReasoningButtonContent
                     chamberStatusGroupElement.style.display = '';
                 }
             )
 
             const chamberReasoningElement = document.getElementById('chamberReasoning');
             const chamberReasoningGroupElement = document.getElementById('chamberReasoningGroup');
+            const chamberAlternativesElement = document.getElementById('chamberAlternatives');
+            const chamberAlternativesGroupElement = document.getElementById('chamberAlternativesGroup');
             chamberReasoningButtonElement.addEventListener('click', function () {
                 fetchChamberReasoning(identifier, type).then(
                     (data) => {
                         chamberReasoningElement.textContent = data.chamberReasoning;
                         chamberReasoningGroupElement.style.display = '';
+                        // chamberAlternativesGroupElement.style.display = ''
+                    }
+                )
+            });
+            chamberAlternativesButtonElement.addEventListener('click', function () {
+                fetchChamberAlternatives(identifier, type).then(
+                    (data) => {
+                        console.log(`Diverse chambers: ${data.diverseChambers}`);
                     }
                 )
             });
@@ -94,6 +105,19 @@ async function fetchChamberReasoning(identifier, type) {
     console.log("fetchChamberReasoning called")
     const url = `${SERVER_URL}/getEchoChamberReasoning?identifier=${identifier}&chamber_type=${type}`;
   
+    try {
+      const response = await fetch(url);
+      const data = await response.json(); // Parse the JSON response
+      return data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+}
+
+async function fetchChamberAlternatives(identifier, type) {
+    console.log("fetchChamberReasoning called")
+    const url = `${SERVER_URL}/getDiverseEchoChambers?identifier=${identifier}&chamber_type=${type}`;
+
     try {
       const response = await fetch(url);
       const data = await response.json(); // Parse the JSON response
