@@ -1,5 +1,5 @@
 ## About
-![alt text](https://github.com/chumomega/echo_chamber/blob/main/client/echo-chamber-high-resolution-logo.png?raw=true)
+<img src="https://github.com/chumomega/echo_chamber/blob/main/cho-chamber-high-resolution-logo-small.png?raw=true" alt="alt text" width="100"></img>
 
 In the digital age, we find ourselves in, information is easier to access than ever before. But this easy access to information has brought about a phenomenon called “echo chambers” that reduces the amount of good information available to users. According to the NIH, this occurs when “users’ opinions, political leanings, or beliefs about a topic are reinforced by repeated interactions with peers with similar tendencies and attitudes” (Gao 2023). Research has shown that this is more prevalent than you might think. Users in the study saw over 50% of content with similar views and less than 15% with differing views (Zadrozny 2023). 
 
