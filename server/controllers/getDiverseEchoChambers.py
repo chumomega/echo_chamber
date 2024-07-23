@@ -24,15 +24,17 @@ def get_diverse_echo_chambers():
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
 
-    chamber_tags = ChamberTagFactory().get_chamber_tags(
+    chamber_tag_factory = ChamberTagFactory()
+    chamber_tags = chamber_tag_factory.get_chamber_tags(
         identifier=identifier, chamber_type=chamber_type
     )
 
-    chamber_tags = ChamberFactory().get_chamber_tags(
-        identifier=identifier, chamber_type=chamber_type
+    chamber_factory = ChamberFactory()
+    similar_chambers = chamber_factory.get_similar_chambers(
+        chamber_type=chamber_type, tags=chamber_tags
     )
 
-    data = {"chamberTags": chamber_tags}
+    data = {"chamberTags": chamber_tags, "diverseChambers": list(similar_chambers)}
     response = jsonify(data)
     # TODO Replace with your frontend origin
     response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")
