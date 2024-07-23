@@ -38,6 +38,13 @@ class Chamber:
 
         return body
 
+    def get_json_body_for_tags(self) -> dict:
+        return {
+            "description": self.description,
+            "title": self.title,
+            "author": self.author,
+        }
+
     def __str__(self):
         return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \
             author='{self.author}', created_timestamp='{self.created_timestamp}', \
