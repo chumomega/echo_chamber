@@ -145,7 +145,7 @@ class FirebaseClient:
 
     def get_tag_chambers(self, tag: str, chamber_type: ChamberType) -> list[str]:
         """
-        This function returns a list of chamber ids that share a tag with the input chamber.
+        This function returns a list of chamber urls that share a tag with the input chamber.
         Only chambers with the same chamber_type will be retrieved
         """
         tags_ref = db.reference(TAGS_TABLE).child(chamber_type.value).child(tag)
@@ -155,6 +155,15 @@ class FirebaseClient:
         for tag_member, tag_value in tag_members.items():
             if tag_value is not True:
                 return []
-            chambers_with_similar_tag.append(tag_member)
+            chambers_with_similar_tag.append(
+                self.__get_url_for_chamber(tag_member, chamber_type)
+            )
 
         return chambers_with_similar_tag
+
+    def __get_url_for_chamber(self, identifier: str, chamber_type: ChamberType) -> str:
+        match chamber_type:
+            case ChamberType.YOUTUBE:
+                return f"https://www.youtube.com/watch?v={identifier}"
+            case _:
+                raise Exception(f"Unsupported chamber type: {chamber_type}")
