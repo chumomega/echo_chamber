@@ -7,3 +7,5 @@ lib/
 pyvenv.cfg
 *.log
 node_modules/
+.DS_Store
+client.zip
