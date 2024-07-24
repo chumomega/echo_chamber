@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const chamberReasoningButtonElement = document.getElementById('chamberReasoningButton');
     const chamberStatusGroupElement = document.getElementById('chamberStatusGroup');
     const chamberAlternativesButtonElement = document.getElementById('chamberAlternativesButton');
+    const loadingSpinnerElement = document.getElementById('loading-spinner-1');
 
     getIdentifierAndType().then(
         ({ identifier, type }) => {
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         chamberStatusContent = "This is not a biased echo chamber";
                         chamberReasoningButtonContent = "Why is this not echo chamber?";
                     }
-                    
+                    loadingSpinnerElement.style.display = 'none';
                     chamberStatusElement.textContent = chamberStatusContent
                     chamberReasoningButtonElement.textContent = chamberReasoningButtonContent
                     chamberStatusGroupElement.style.display = '';
@@ -46,8 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const chamberAlternativesElement = document.getElementById('chamberAlternatives');
             const chamberAlternativesGroupElement = document.getElementById('chamberAlternativesGroup');
             chamberReasoningButtonElement.addEventListener('click', function () {
+                chamberReasoningButtonElement.disabled = true;
+                loadingSpinnerElement.style.display = '';
                 fetchChamberReasoning(identifier, type).then(
                     (data) => {
+                        loadingSpinnerElement.style.display = 'none';
                         chamberReasoningElement.textContent = data.chamberReasoning;
                         chamberReasoningGroupElement.style.display = '';
                         // chamberAlternativesGroupElement.style.display = ''
@@ -55,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 )
             });
             chamberAlternativesButtonElement.addEventListener('click', function () {
+                chamberAlternativesButtonElement.disabled = true;
+                loadingSpinnerElement.style.display = '';
                 fetchChamberAlternatives(identifier, type).then(
                     (data) => {
                         console.log(`Diverse chambers: ${data.diverseChambers}`);
@@ -67,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             listItem.appendChild(link);
                             chamberAlternativesElement.appendChild(listItem);
                         })
+                        loadingSpinnerElement.style.display = 'none';
                         chamberAlternativesGroupElement.style.display = '';
                     }
                 )
@@ -74,6 +81,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     ).catch(error => {
         console.error("Error: ", error);
+        const contentDiv = document.getElementById('mainContent');
+        const paragraph = document.createElement('p');
+        paragraph.textContent = "We don't support this website yet, but please try again later.";
+        contentDiv.appendChild(paragraph);
+        contentDiv.classList.add("lead")
+        loadingSpinnerElement.style.display = 'none';
     });
 });
 

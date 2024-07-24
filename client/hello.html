@@ -2,19 +2,31 @@
 <html>
 <head>
     <title>Echo Chamber Dummy Dashboard</title>
-    <script src="lib/chart.min.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 <body>
-    <div style="width: 400px; height: 400px">
-        <h1>Hello!</h1>
+    <div id="mainContent" style="width: 400px; height: 400px;margin: 30px;">
+        <header style="display: flex;align-items: center;">
+            <img 
+                src="echo-chamber-high-resolution-logo.png" 
+                alt="Echo Chamber logo"  
+                class="rounded" 
+                style="height: 50px; margin-right: 10px;"
+            >
+            <h1>Echo Chamber</h1>
+        </header>
+        <br>
         <div id="chamberStatusGroup" style="display: none;">
-            <p id="chamberStatus"></p>
-            <button id="chamberReasoningButton">This shouldn't be here</button>
+            <p id="chamberStatus" class="lead"></p>
+            <button id="chamberReasoningButton" type="button" class="btn btn-primary" style="margin-bottom: 30px;">This shouldn't be here</button>
         </div>
         <div id="chamberReasoningGroup" style="display: none;">
             <p id="chamberReasoning">This shouldn't be here</p>
             <br/>
-            <button id="chamberAlternativesButton">Get diverse & balanced chambers</button>
+            <button id="chamberAlternativesButton" type="button" class="btn btn-success" style="margin-bottom: 30px;">Get diverse & balanced chambers</button>
+        </div>
+        <div id="loading-spinner-1" class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
         <div id="chamberAlternativesGroup" style="display: none;">
             <ol id="chamberAlternatives"></ol>
