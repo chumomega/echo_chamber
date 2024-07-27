@@ -99,8 +99,15 @@ class GeminiClient:
         prompt = """
             Put your data analyst/labeler hat on.
 
-            Please analyze all comments in the "input" provided and determine the overall sentiment based on labels from "fixed_labels".
-            Please provide a reasoning for the sentiment in a JSON format like: {'reasoning': output}
+            Please analyze all comments in the "input" provided and determine the overall sentiment 
+            based on labels from "fixed_labels". Make sure to provide the reasoning for the 
+            sentiment in a JSON format like: {'reasoning': output}
+
+            Guidelines:
+            - Don't say anything that could fall in the HARM_CATEGORY_HARASSMENT by the way. THis is very important.
+            - Use double quotes
+            - Explain at 10th grade reading level or below.
+            - Use 80 words or less
 
             "fixed_labels": $political_labels
             "input": $comments
@@ -117,8 +124,8 @@ class GeminiClient:
             json_str = response[json_begin_index - 1 : json_end_index + 1]
             j = json.loads(json_str)
             return j["reasoning"]
-        except Exception:
-            logger.error("could not parse json: {}".format(response))
+        except Exception as e:
+            logger.error("could not parse json: {}".format(response), e)
             
     def get_tags_for_chamber(
         self, chamber: Chamber, comments: list[Comment]
