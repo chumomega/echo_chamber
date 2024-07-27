@@ -36,7 +36,7 @@ def get_echo_chamber_status():
     firebase_client = get_firebase()
     firebase_client.update_chamber_label_magnitudes(
         identifier=identifier,
-        chamber_type=ChamberType.YOUTUBE,
+        chamber_type=chamber_type,
         label_magnitudes=chamber_label_magnitudes,
     )
 

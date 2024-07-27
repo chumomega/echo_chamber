@@ -15,11 +15,15 @@ class ChamberMemberFactory:
     def get_chamber_members(self, identifier: str, chamber_type: str) -> list[Comment]:
         match chamber_type:
             case ChamberType.YOUTUBE.value:
-                return self.__get_youtube_chamber_members(identifier)
+                return self._get_youtube_chamber_members(identifier)
+            case ChamberType.REDDIT.value:
+                return self._get_reddit_chamber_members(identifier)
+            case ChamberType.X.value:
+                return self._get_x_chamber_members(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
-    def __get_youtube_chamber_members(self, identifier: str) -> list[Comment]:
+    def _get_youtube_chamber_members(self, identifier: str) -> list[Comment]:
         firebase_client = get_firebase()
         youtube_client = get_youtube()
 
@@ -39,3 +43,9 @@ class ChamberMemberFactory:
             firebase_client.add_chamber_member(identifier, ChamberType.YOUTUBE, comment)
 
         return video_comments
+
+    def _get_reddit_chamber_members(self, identifier: str) -> list[Comment]:
+        raise NotImplementedError
+    
+    def _get_x_chamber_members(self, identifier: str) -> list[Comment]:
+        raise NotImplementedError

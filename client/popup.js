@@ -1,4 +1,5 @@
 // Use "http://127.0.0.1:8000" in dev and https://echochamber-mtxmtj5oba-ue.a.run.app/ in prod
+//const SERVER_URL = "https://echochamber-mtxmtj5oba-ue.a.run.app/"
 const SERVER_URL = "http://127.0.0.1:8000"
 const DESKTOP_YOUTUBE_VIDEO_REGEX = /^(https\:\/\/www\.youtube\.com\/watch\?v=){1}.+/;
 
