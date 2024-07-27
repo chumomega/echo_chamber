@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Echo Chamber",
   "description": "Echo Chamber Extension: Diverse and balanced information for everyone",
-  "version": "1.0",
+  "version": "1.1",
   "permissions": ["activeTab"],
   "action": {
     "default_popup": "hello.html",
