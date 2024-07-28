@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     ).catch(error => {
-        console.log(error.message);
+        console.log(error);
         const contentDiv = document.getElementById('mainContent');
         const paragraph = document.createElement('p');
         paragraph.textContent = "We don't support this website yet, but please try again later.";
