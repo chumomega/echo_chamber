@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 ).catch(
                     error => {
-                        console.error("Error fetching ChamberStatus:", error);
+                        console.error("Error fetching ChamberReasoning:", error);
                         const contentDiv = document.getElementById('mainContent');
                         const paragraph = document.createElement('p');
                         paragraph.textContent = "We don't support this website yet, but please try again later.";
@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingSpinnerElement.style.display = '';
                 fetchChamberAlternatives(identifier, type).then(
                     (data) => {
-                        console.log(`Diverse chambers: ${data.diverseChambers}`);
                         data.diverseChambers.forEach(url => {
                             const listItem = document.createElement('li');
                             const link = document.createElement('a');
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 ).catch(
                     error => {
-                        console.error("Error fetching ChamberStatus:", error);
+                        console.error("Error fetching ChamberAlternatives:", error);
                         const contentDiv = document.getElementById('mainContent');
                         const paragraph = document.createElement('p');
                         paragraph.textContent = "We don't support this website yet, but please try again later.";
@@ -111,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     ).catch(error => {
-        console.error("Error: ", error);
+        console.log(error.message);
         const contentDiv = document.getElementById('mainContent');
         const paragraph = document.createElement('p');
         paragraph.textContent = "We don't support this website yet, but please try again later.";
@@ -129,7 +128,7 @@ async function getIdentifierAndType() {
         identifier = getPodcastIdFromDesktopYoutubeVideoUrl(tab.url)
         type = "youtube"
     } else {
-        throw("Supported Platform content not found")
+        throw(`Supported Platform content not found for url: ${tab.url}`)
     }
     return {identifier, type}
 }
