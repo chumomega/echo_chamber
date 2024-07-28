@@ -12,6 +12,7 @@ class Chamber:
         author: str,
         created_timestamp: float = time.time(),
         label_magnitudes: PoliticalLabelMagnitudes = None,
+        chamber_status: str = None,
     ) -> None:
 
         self.id = id
@@ -20,10 +21,17 @@ class Chamber:
         self.author = author
         self.created_timestamp = created_timestamp
         self.label_magnitudes = label_magnitudes
+        self.chamber_status = chamber_status
         return
 
     def get_id(self) -> str:
         return self.id
+
+    def get_chamber_status(self) -> str:
+        return self.chamber_status
+
+    def get_label_magnitudes(self) -> PoliticalLabelMagnitudes:
+        return self.label_magnitudes
 
     def get_json_body(self) -> dict:
         body = {
@@ -35,6 +43,9 @@ class Chamber:
 
         if self.label_magnitudes is not None:
             body["label_magnitudes"] = self.label_magnitudes
+
+        if self.chamber_status is not None:
+            body["chamber_status"] = self.chamber_status
 
         return body
 
@@ -48,4 +59,4 @@ class Chamber:
     def __str__(self):
         return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \
             author='{self.author}', created_timestamp='{self.created_timestamp}', \
-                label_magnitudes='{self.label_magnitudes}')"
+                label_magnitudes='{self.label_magnitudes}', chamber_status='{self.chamber_status}')"

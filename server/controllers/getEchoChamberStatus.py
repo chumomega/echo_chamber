@@ -29,18 +29,30 @@ def get_echo_chamber_status():
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_chamber_members(
-        identifier=identifier, chamber_type=chamber_type
-    )
-    chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
-    firebase_client = get_firebase()
-    firebase_client.update_chamber_label_magnitudes(
-        identifier=identifier,
-        chamber_type=chamber_type,
-        label_magnitudes=chamber_label_magnitudes,
-    )
+    biased_chamber = chamber_x.get_chamber_status()
+    chamber_label_magnitudes = chamber_x.get_label_magnitudes()
 
-    biased_chamber = get_biased_chamber(chamber_label_magnitudes)
+    if chamber_label_magnitudes is None:
+        logger.info("No label magnitudes in db, trying to generate...")
+        chamber_members = ChamberMemberFactory().get_chamber_members(
+            identifier=identifier, chamber_type=chamber_type
+        )
+        chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
+        firebase_client = get_firebase()
+        firebase_client.update_chamber_label_magnitudes(
+            identifier=identifier,
+            chamber_type=chamber_type,
+            label_magnitudes=chamber_label_magnitudes,
+        )
+
+    if biased_chamber is None:
+        logger.info("No chamber status in db, trying to generate...")
+        biased_chamber = get_biased_chamber(chamber_label_magnitudes)
+        firebase_client.add_chamber_status(
+            identifier=identifier,
+            chamber_type=chamber_type,
+            chamber_status=biased_chamber,
+        )
 
     data = {
         "isBiasedChamber": True if biased_chamber != None else False,

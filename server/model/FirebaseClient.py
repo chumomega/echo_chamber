@@ -73,6 +73,7 @@ class FirebaseClient:
             author=chamber_response.get("author", None),
             created_timestamp=chamber_response.get("created_timestamp", None),
             label_magnitudes=chamber_response.get("label_magnitudes", None),
+            chamber_status=chamber_response.get("chamber_status", None),
         )
 
     def update_chamber_label_magnitudes(
@@ -80,12 +81,24 @@ class FirebaseClient:
         identifier: str,
         chamber_type: str,
         label_magnitudes: PoliticalLabelMagnitudes,
-    ) -> Chamber:
+    ):
         ref = db.reference(
             CHAMBERS_TABLE
             + "/{}/{}/{}".format(chamber_type, identifier, "label_magnitudes")
         )
         ref.update(label_magnitudes)
+
+    def add_chamber_status(
+        self,
+        identifier: str,
+        chamber_type: str,
+        chamber_status: str,
+    ):
+        ref = db.reference(
+            CHAMBERS_TABLE
+            + "/{}/{}/{}".format(chamber_type, identifier, "chamber_status")
+        )
+        ref.set(chamber_status)
 
     def get_chamber_members(
         self, identifier: str, chamber_type: ChamberType

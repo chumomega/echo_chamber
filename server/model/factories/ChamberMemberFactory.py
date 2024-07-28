@@ -46,6 +46,6 @@ class ChamberMemberFactory:
 
     def _get_reddit_chamber_members(self, identifier: str) -> list[Comment]:
         raise NotImplementedError
-    
+
     def _get_x_chamber_members(self, identifier: str) -> list[Comment]:
         raise NotImplementedError

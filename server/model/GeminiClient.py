@@ -33,9 +33,7 @@ class GeminiClient:
         return
 
     def get_response_from_ai(self, prompt) -> str:
-        response = self.client.generate_content(
-            prompt, stream=False
-        )  # stream=True fails
+        response = self.client.generate_content(prompt, stream=False)
         return response.text
 
     def get_labels_for_comments(self, comments: list[Comment]) -> list[Comment]:
@@ -93,7 +91,9 @@ class GeminiClient:
                 comment.set_label_magnitudes(comment_labels[comment.get_id()])
         return comments
 
-    def get_reasoning_for_comments(self, comments: list[Comment]):
+    def get_reasoning_for_comments(
+        self, chamber: Chamber, comments: list[Comment]
+    ) -> str:
         political_labels_json = json.dumps(POLITICAL_LABELS)
         json_comments = [comment.text for comment in comments]
         prompt = """
@@ -126,7 +126,7 @@ class GeminiClient:
             return j["reasoning"]
         except Exception as e:
             logger.error("could not parse json: {}".format(response), e)
-            
+
     def get_tags_for_chamber(
         self, chamber: Chamber, comments: list[Comment]
     ) -> list[Comment]:

@@ -36,9 +36,10 @@ class ChamberFactory:
 
     def _get_reddit_chamber(self, identifier: str) -> Chamber:
         raise NotImplementedError
-    
+
     def _get_x_chamber(self, identifier: str) -> Chamber:
         raise NotImplementedError
+
     def get_similar_chambers(self, chamber_type: str, tags: list[str]) -> set[str]:
         match chamber_type:
             case ChamberType.YOUTUBE.value:
@@ -68,6 +69,6 @@ class ChamberFactory:
 
     def _get_similar_reddit_chamber(self, tags: list[str]) -> list[Chamber]:
         raise NotImplementedError
-    
+
     def _get_similar_x_chamber(self, tags: list[str]) -> list[Chamber]:
         raise NotImplementedError

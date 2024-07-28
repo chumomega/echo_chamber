@@ -21,14 +21,14 @@ def get_echo_chamber_reasoning():
     identifier = request.args.get("identifier")
     chamber_type = request.args.get("chamber_type")
     validateInput(identifier, chamber_type)
-    
+
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
     chamber_members = ChamberMemberFactory().get_chamber_members(
         identifier=identifier, chamber_type=chamber_type
     )
-    reasoning = get_gemini().get_reasoning_for_comments(chamber_members)
+    reasoning = get_gemini().get_reasoning_for_comments(chamber_x, chamber_members)
     data = {"chamberReasoning": reasoning}
     response = jsonify(data)
     # TODO Replace with your frontend origin
