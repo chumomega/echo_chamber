@@ -56,6 +56,15 @@ class Chamber:
             "author": self.author,
         }
 
+    def get_json_body_for_explanation(self) -> dict:
+        return {
+            "description": self.description,
+            "title": self.title,
+            "author": self.author,
+            "label_magnitudes": self.label_magnitudes,
+            "chamber_status": self.chamber_status,
+        }
+
     def __str__(self):
         return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \
             author='{self.author}', created_timestamp='{self.created_timestamp}', \

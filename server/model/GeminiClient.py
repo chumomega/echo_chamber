@@ -94,27 +94,32 @@ class GeminiClient:
     def get_reasoning_for_comments(
         self, chamber: Chamber, comments: list[Comment]
     ) -> str:
-        political_labels_json = json.dumps(POLITICAL_LABELS)
-        json_comments = [comment.text for comment in comments]
         prompt = """
-            Put your data analyst/labeler hat on.
+            Put your clear communicator hat on.
 
-            Please analyze all comments in the "input" provided and determine the overall sentiment 
-            based on labels from "fixed_labels". Make sure to provide the reasoning for the 
-            sentiment in a JSON format like: {'reasoning': output}
+            I'll be giving you data on a potential echo chamber in the "potential_echo_chamber" value 
+            with things like the status I calculated and the magnitude of various labels.
+            Please analyze it and the "chamber_members" to generate an explanation on why said chamber 
+            is or is not a chamber.
+            
+            Make sure to provide the reasoning for the explanation in a JSON format like: {"reasoning": "Insert Reasoning here"}
 
             Guidelines:
-            - Don't say anything that could fall in the HARM_CATEGORY_HARASSMENT by the way. THis is very important.
-            - Use double quotes
+            - If it is an echo chamber, use the magnitude for it in your explanation
+            - Don't say anything that could fall in the HARM_CATEGORY_HARASSMENT by the way. This is very important.
+            - Use double quotes for JSON. This is very important
             - Explain at 10th grade reading level or below.
             - Use 80 words or less
+            - Use snippets of examples in your explanation
+            - Don't explicitly say "potential_echo_chamber" or "chamber_members" in your explanation
 
-            "fixed_labels": $political_labels
-            "input": $comments
+            "potential_echo_chamber": $potential_echo_chamber
+            "chamber_members": $chamber_members
         """
         prompt_template = Template(prompt)
         complete_prompt_request = prompt_template.substitute(
-            political_labels=political_labels_json, comments=json_comments
+            chamber_members=self.get_json_comments_str(comments),
+            potential_echo_chamber=chamber.get_json_body_for_explanation(),
         )
         response = self.get_response_from_ai(complete_prompt_request)
         # Parse Json Response from Gemini
