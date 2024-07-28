@@ -41,6 +41,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     chamberReasoningButtonElement.textContent = chamberReasoningButtonContent
                     chamberStatusGroupElement.style.display = '';
                 }
+            ).catch(
+                error => {
+                    console.error("Error fetching ChamberStatus:", error);
+                    const contentDiv = document.getElementById('mainContent');
+                    const paragraph = document.createElement('p');
+                    paragraph.textContent = "We don't support this website yet, but please try again later.";
+                    contentDiv.appendChild(paragraph);
+                    contentDiv.classList.add("lead")
+                    loadingSpinnerElement.style.display = 'none';
+                }
             )
 
             const chamberReasoningElement = document.getElementById('chamberReasoning');
@@ -56,6 +66,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         chamberReasoningElement.textContent = data.chamberReasoning;
                         chamberReasoningGroupElement.style.display = '';
                         // chamberAlternativesGroupElement.style.display = ''
+                    }
+                ).catch(
+                    error => {
+                        console.error("Error fetching ChamberStatus:", error);
+                        const contentDiv = document.getElementById('mainContent');
+                        const paragraph = document.createElement('p');
+                        paragraph.textContent = "We don't support this website yet, but please try again later.";
+                        contentDiv.appendChild(paragraph);
+                        contentDiv.classList.add("lead")
+                        loadingSpinnerElement.style.display = 'none';
                     }
                 )
             });
@@ -76,6 +96,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         })
                         loadingSpinnerElement.style.display = 'none';
                         chamberAlternativesGroupElement.style.display = '';
+                    }
+                ).catch(
+                    error => {
+                        console.error("Error fetching ChamberStatus:", error);
+                        const contentDiv = document.getElementById('mainContent');
+                        const paragraph = document.createElement('p');
+                        paragraph.textContent = "We don't support this website yet, but please try again later.";
+                        contentDiv.appendChild(paragraph);
+                        contentDiv.classList.add("lead")
+                        loadingSpinnerElement.style.display = 'none';
                     }
                 )
             });
@@ -107,14 +137,10 @@ async function getIdentifierAndType() {
 async function fetchChamberStatus(identifier, type) {
     console.log("fetchChamberStatus called")
     const url = `${SERVER_URL}/getEchoChamberStatus?identifier=${identifier}&chamber_type=${type}`;
-  
-    try {
-      const response = await fetch(url);
-      const data = await response.json(); // Parse the JSON response
-      return data
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+
+    const response = await fetch(url);
+    const data = await response.json(); // Parse the JSON response
+    return data
 }
 
 function getChamberPercentage(chamber, chamberLabelMagnitudes) {
