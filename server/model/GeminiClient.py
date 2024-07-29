@@ -33,8 +33,16 @@ class GeminiClient:
         return
 
     def get_response_from_ai(self, prompt) -> str:
-        response = self.client.generate_content(prompt, stream=False)
-        return response.text
+        try:
+            response = self.client.generate_content(prompt, stream=False)
+            return response.text
+        except Exception as e:
+            logger.error("Error getting response from Gemini", e)
+            safety_ratings_logs = ""
+            for candidate in response.candidates:
+                safety_ratings_logs += f"{candidate.safety_ratings}\n"
+            logger.error(safety_ratings_logs)
+            raise Exception
 
     def get_labels_for_comments(self, comments: list[Comment]) -> list[Comment]:
         political_labels_json = json.dumps(POLITICAL_LABELS)
@@ -106,7 +114,7 @@ class GeminiClient:
 
             Guidelines:
             - If it is an echo chamber, use the magnitude for it in your explanation
-            - Don't say anything that could fall in the HARM_CATEGORY_HARASSMENT by the way. This is very important.
+            - Don't say anything that could be assessed as HARASSMENT, HATE_SPEECH, SEXUALLY_EXPLICIT, or DANGEROUS_CONTENT
             - Use double quotes for JSON. This is very important
             - Explain at 10th grade reading level or below.
             - Use 80 words or less
