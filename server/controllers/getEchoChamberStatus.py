@@ -48,11 +48,12 @@ def get_echo_chamber_status():
     if biased_chamber is None:
         logger.info("No chamber status in db, trying to generate...")
         biased_chamber = get_biased_chamber(chamber_label_magnitudes)
-        firebase_client.add_chamber_status(
-            identifier=identifier,
-            chamber_type=chamber_type,
-            chamber_status=biased_chamber,
-        )
+        if biased_chamber is not None:
+            firebase_client.add_chamber_status(
+                identifier=identifier,
+                chamber_type=chamber_type,
+                chamber_status=biased_chamber,
+            )
 
     data = {
         "isBiasedChamber": True if biased_chamber != None else False,
