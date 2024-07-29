@@ -31,6 +31,7 @@ def get_echo_chamber_status():
     )
     biased_chamber = chamber_x.get_chamber_status()
     chamber_label_magnitudes = chamber_x.get_label_magnitudes()
+    firebase_client = get_firebase()
 
     if chamber_label_magnitudes is None:
         logger.info("No label magnitudes in db, trying to generate...")
@@ -38,7 +39,6 @@ def get_echo_chamber_status():
             identifier=identifier, chamber_type=chamber_type
         )
         chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
-        firebase_client = get_firebase()
         firebase_client.update_chamber_label_magnitudes(
             identifier=identifier,
             chamber_type=chamber_type,
