@@ -4,7 +4,7 @@ from model.factories.ChamberFactory import ChamberFactory
 from model.factories.ChamberMemberFactory import ChamberMemberFactory
 from model.ChamberType import ChamberType
 from flask import jsonify
-from context_initializers import get_gemini
+from context_initializers import get_gemini, get_firebase
 import logging
 import lorem
 
@@ -25,11 +25,24 @@ def get_echo_chamber_reasoning():
     chamber_x = ChamberFactory().get_chamber(
         identifier=identifier, chamber_type=chamber_type
     )
-    chamber_members = ChamberMemberFactory().get_chamber_members(
-        identifier=identifier, chamber_type=chamber_type
-    )
-    reasoning = get_gemini().get_reasoning_for_comments(chamber_x, chamber_members)
-    data = {"chamberReasoning": reasoning}
+
+    chamber_reasoning = chamber_x.get_chamber_reasoning()
+    if chamber_reasoning is None:
+        logger.info("No chamber reasoning in db, trying to generate...")
+        firebase_client = get_firebase()
+        chamber_members = ChamberMemberFactory().get_chamber_members(
+            identifier=identifier, chamber_type=chamber_type
+        )
+        chamber_reasoning = get_gemini().get_reasoning_for_comments(
+            chamber_x, chamber_members
+        )
+        firebase_client.add_chamber_reasoning(
+            identifier=identifier,
+            chamber_type=chamber_type,
+            chamber_reasoning=chamber_reasoning,
+        )
+
+    data = {"chamberReasoning": chamber_reasoning}
     response = jsonify(data)
     # TODO Replace with your frontend origin
     response.headers["Access-Control-Allow-Origin"] = "*"

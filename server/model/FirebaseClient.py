@@ -74,6 +74,7 @@ class FirebaseClient:
             created_timestamp=chamber_response.get("created_timestamp", None),
             label_magnitudes=chamber_response.get("label_magnitudes", None),
             chamber_status=chamber_response.get("chamber_status", None),
+            chamber_reasoning=chamber_response.get("chamber_reasoning", None),
         )
 
     def update_chamber_label_magnitudes(
@@ -99,6 +100,18 @@ class FirebaseClient:
             + "/{}/{}/{}".format(chamber_type, identifier, "chamber_status")
         )
         ref.set(chamber_status)
+
+    def add_chamber_reasoning(
+        self,
+        identifier: str,
+        chamber_type: str,
+        chamber_reasoning: str,
+    ):
+        ref = db.reference(
+            CHAMBERS_TABLE
+            + "/{}/{}/{}".format(chamber_type, identifier, "chamber_reasoning")
+        )
+        ref.set(chamber_reasoning)
 
     def get_chamber_members(
         self, identifier: str, chamber_type: ChamberType
