@@ -37,7 +37,7 @@ def get_diverse_echo_chambers():
     data = {"chamberTags": chamber_tags, "diverseChambers": list(similar_chambers)}
     response = jsonify(data)
     # TODO Replace with your frontend origin
-    response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")
+    response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
 

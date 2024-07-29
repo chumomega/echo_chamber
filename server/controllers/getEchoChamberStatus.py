@@ -61,7 +61,7 @@ def get_echo_chamber_status():
     }
     response = jsonify(data)
     # TODO Replace with your frontend origin
-    response.headers["Access-Control-Allow-Origin"] = environ.get("CLIENT_ORIGIN")
+    response.headers["Access-Control-Allow-Origin"] = "*"
     return response
 
 
