@@ -112,9 +112,10 @@ class GeminiClient:
             
             Make sure to provide the reasoning for the explanation in a JSON format like: {"reasoning": "Insert Reasoning here"}
 
-            Guidelines:
+            Rules:
             - If it is an echo chamber, use the magnitude for it in your explanation
             - Don't say anything that could be assessed as HARASSMENT, HATE_SPEECH, SEXUALLY_EXPLICIT, or DANGEROUS_CONTENT
+            - If your response could potentially break the above rule, paraphrase such that it doesn't. This is vital!!!
             - Use double quotes for JSON. This is very important
             - Explain at 10th grade reading level or below.
             - Use 80 words or less
