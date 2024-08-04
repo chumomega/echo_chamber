@@ -68,6 +68,7 @@ class FirebaseClient:
             return None
         return Chamber(
             id=identifier,
+            chamber_type=chamber_type.value,
             title=chamber_response.get("title", None),
             description=chamber_response.get("description", None),
             author=chamber_response.get("author", None),
@@ -169,9 +170,9 @@ class FirebaseClient:
 
         return tags
 
-    def get_tag_chambers(self, tag: str, chamber_type: ChamberType) -> list[str]:
+    def get_tag_chamber_urls(self, tag: str, chamber_type: ChamberType) -> list[str]:
         """
-        This function returns a list of chamber urls that share a tag with the input chamber.
+        This function returns a list of chamber urls that share a tag with the input tag.
         Only chambers with the same chamber_type will be retrieved
         """
         tags_ref = db.reference(TAGS_TABLE).child(chamber_type.value).child(tag)
@@ -184,6 +185,22 @@ class FirebaseClient:
             chambers_with_similar_tag.append(
                 self.__get_url_for_chamber(tag_member, chamber_type)
             )
+
+        return chambers_with_similar_tag
+
+    def get_tag_chamber_ids(self, tag: str, chamber_type: ChamberType) -> list[str]:
+        """
+        This function returns a list of chamber ids that share a tag with the input tag.
+        Only chambers with the same chamber_type will be retrieved
+        """
+        tags_ref = db.reference(TAGS_TABLE).child(chamber_type.value).child(tag)
+        tag_members: dict = tags_ref.get()
+
+        chambers_with_similar_tag = []
+        for tag_member, tag_value in tag_members.items():
+            if tag_value is not True:
+                return []
+            chambers_with_similar_tag.append(tag_member)
 
         return chambers_with_similar_tag
 

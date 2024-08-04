@@ -84,13 +84,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingSpinnerElement.style.display = '';
                 fetchChamberAlternatives(identifier, type).then(
                     (data) => {
-                        data.diverseChambers.forEach(url => {
+                        data.diverseChamberObjects.forEach(chamberObj => {
                             const listItem = document.createElement('li');
-                            const link = document.createElement('a');
-                            link.href = url;
-                            link.textContent = url;
-                            link.target = "_blank";
-                            listItem.appendChild(link);
+                            listItem.appendChild(
+                                createCardComponent(
+                                    chamberObj.title, 
+                                    chamberObj.author, 
+                                    chamberObj.chamber_status,
+                                    chamberObj.url
+                                )
+                            );
                             chamberAlternativesElement.appendChild(listItem);
                         })
                         loadingSpinnerElement.style.display = 'none';
@@ -176,3 +179,36 @@ async function fetchChamberAlternatives(identifier, type) {
     }
 }
   
+function createCardComponent(title, subtitle, text, link1) {
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-3'); // Add Bootstrap classes for styling
+  
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+  
+    const cardLink1 = document.createElement('a');
+    cardLink1.classList.add('card-link');
+    cardLink1.href = link1;
+    cardLink1.textContent = title;
+    cardLink1.target = "_blank";
+    
+    const cardTitle = document.createElement('h5');
+    cardTitle.classList.add('card-title');
+    cardTitle.appendChild(cardLink1)
+  
+  
+    const cardSubtitle = document.createElement('h6');
+    cardSubtitle.classList.add('card-subtitle', 'mb-2', 'text-body-secondary');
+    cardSubtitle.textContent  = subtitle;
+  
+    const cardText = document.createElement('span');
+    cardText.classList.add('badge', 'rounded-pill',  'text-bg-info');
+    cardText.textContent = text;
+
+    cardBody.appendChild(cardTitle);
+    cardBody.appendChild(cardSubtitle);
+    cardBody.appendChild(cardText);
+    card.appendChild(cardBody);
+  
+    return card;
+  }
