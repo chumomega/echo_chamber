@@ -34,6 +34,7 @@ class GeminiClient:
         return
 
     def get_response_from_ai(self, prompt) -> str:
+        response = None
         try:
             response = self.client.generate_content(
                 prompt,
@@ -43,16 +44,16 @@ class GeminiClient:
                     HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
                     HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
                     HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                    HarmCategory.HARM_CATEGORY_TOXICITY: HarmBlockThreshold.BLOCK_NONE,
                 },
             )
             return response.text
         except Exception as e:
             logger.error("Error getting response from Gemini", e)
-            safety_ratings_logs = ""
-            for candidate in response.candidates:
-                safety_ratings_logs += f"{candidate.safety_ratings}\n"
-            logger.error(safety_ratings_logs)
+            if response is not None:
+                safety_ratings_logs = ""
+                for candidate in response.candidates:
+                    safety_ratings_logs += f"{candidate.safety_ratings}\n"
+                logger.error(safety_ratings_logs)
             raise e
 
     def get_labels_for_comments(self, comments: list[Comment]) -> list[Comment]:
