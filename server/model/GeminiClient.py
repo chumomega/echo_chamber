@@ -1,4 +1,5 @@
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from model.Comment import Comment
 from model.Chamber import Chamber
 import json
@@ -34,7 +35,17 @@ class GeminiClient:
 
     def get_response_from_ai(self, prompt) -> str:
         try:
-            response = self.client.generate_content(prompt, stream=False)
+            response = self.client.generate_content(
+                prompt,
+                stream=False,
+                safety_settings={
+                    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                    HarmCategory.HARM_CATEGORY_TOXICITY: HarmBlockThreshold.BLOCK_NONE,
+                },
+            )
             return response.text
         except Exception as e:
             logger.error("Error getting response from Gemini", e)
@@ -42,7 +53,7 @@ class GeminiClient:
             for candidate in response.candidates:
                 safety_ratings_logs += f"{candidate.safety_ratings}\n"
             logger.error(safety_ratings_logs)
-            raise Exception
+            raise e
 
     def get_labels_for_comments(self, comments: list[Comment]) -> list[Comment]:
         political_labels_json = json.dumps(POLITICAL_LABELS)
@@ -103,7 +114,7 @@ class GeminiClient:
         self, chamber: Chamber, comments: list[Comment]
     ) -> str:
         prompt = """
-            Put your clear communicator hat on.
+            Put your reporter hat on, meaning using quotes and data for explanations.
 
             I'll be giving you data on a potential echo chamber in the "potential_echo_chamber" value 
             with things like the status I calculated and the magnitude of various labels.
@@ -114,8 +125,6 @@ class GeminiClient:
 
             Rules:
             - If it is an echo chamber, use the magnitude for it in your explanation
-            - Don't say anything that could be assessed as HARASSMENT, HATE_SPEECH, SEXUALLY_EXPLICIT, or DANGEROUS_CONTENT
-            - If your response could potentially break the above rule, paraphrase such that it doesn't. This is vital!!!
             - Use double quotes for JSON. This is very important
             - Explain at 10th grade reading level or below.
             - Use 80 words or less

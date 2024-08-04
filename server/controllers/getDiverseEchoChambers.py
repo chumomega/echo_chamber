@@ -30,11 +30,35 @@ def get_diverse_echo_chambers():
     )
 
     chamber_factory = ChamberFactory()
-    similar_chambers = chamber_factory.get_similar_chambers(
+    chamber = chamber_factory.get_chamber(
+        identifier=identifier, chamber_type=chamber_type
+    )
+    similar_tag_chamber_ids = chamber_factory.get_similar_chambers_ids(
         chamber_type=chamber_type, tags=chamber_tags
     )
 
-    data = {"chamberTags": chamber_tags, "diverseChambers": list(similar_chambers)}
+    similar_tag_chambers = chamber_factory.get_chambers(
+        map(lambda chamber_id: (chamber_id, "youtube"), similar_tag_chamber_ids)
+    )
+    filtered_similar_chambers = list(
+        filter(
+            lambda sim_tag_chamber: sim_tag_chamber != None
+            and sim_tag_chamber.get_chamber_status() != None
+            and sim_tag_chamber.get_chamber_status() != chamber.get_chamber_status(),
+            similar_tag_chambers,
+        )
+    )
+    similar_chamber_urls = chamber_factory.get_similar_youtube_chamber_urls(
+        tags=chamber_tags
+    )
+
+    data = {
+        "chamberTags": chamber_tags,
+        "diverseChambers": list(similar_chamber_urls),
+        "diverseChamberObjects": list(
+            map(lambda chamber: chamber.get_serialized(), filtered_similar_chambers)
+        ),
+    }
     response = jsonify(data)
     # TODO Replace with your frontend origin
     response.headers["Access-Control-Allow-Origin"] = "*"

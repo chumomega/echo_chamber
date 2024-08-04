@@ -1,5 +1,6 @@
 import time
 from model.LabelMagnitudes import PoliticalLabelMagnitudes
+from model.ChamberType import ChamberType
 
 
 class Chamber:
@@ -14,9 +15,11 @@ class Chamber:
         label_magnitudes: PoliticalLabelMagnitudes = None,
         chamber_status: str = None,
         chamber_reasoning: str = None,
+        chamber_type: str = None,
     ) -> None:
 
         self.id = id
+        self.chamber_type = chamber_type
         self.title = title
         self.description = description
         self.author = author
@@ -74,8 +77,26 @@ class Chamber:
             "chamber_status": self.chamber_status,
         }
 
+    def get_serialized(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "author": self.author,
+            "label_magnitudes": self.label_magnitudes,
+            "chamber_status": self.chamber_status,
+            "chamber_reasoning": self.chamber_reasoning,
+            "url": self.__get_url_for_chamber(),
+        }
+
+    def __get_url_for_chamber(self) -> str:
+        match self.chamber_type:
+            case ChamberType.YOUTUBE:
+                return f"https://www.youtube.com/watch?v={self.id}"
+            case _:
+                raise Exception(f"Unsupported chamber type: {self.chamber_type}")
+
     def __str__(self):
-        return f"Chamber(id='{self.id}', title='{self.title}', description='{self.description}', \
+        return f"Chamber(id='{self.id}', type='{self.chamber_type}', title='{self.title}', description='{self.description}', \
             author='{self.author}', created_timestamp='{self.created_timestamp}', \
                 label_magnitudes='{self.label_magnitudes}', chamber_status='{self.chamber_status}', \
                 chamber_reasoning='{self.chamber_reasoning}')"

@@ -1,5 +1,6 @@
 from model.Chamber import Chamber
 from model.Comment import Comment
+from model.ChamberType import ChamberType
 from os import environ
 from googleapiclient.discovery import build
 import logging
@@ -33,6 +34,7 @@ class YoutubeClient:
 
         return Chamber(
             id=identifier,
+            chamber_type=ChamberType.YOUTUBE.value,
             title=video_response["items"][0]["snippet"]["title"],
             description=video_response["items"][0]["snippet"]["description"],
             author=video_response["items"][0]["snippet"]["channelTitle"],
