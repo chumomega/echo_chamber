@@ -1,5 +1,5 @@
 from model.ChamberType import ChamberType
-from context_initializers import get_firebase, get_youtube, get_reddit
+from context_initializers import get_firebase, get_youtube
 from model.Chamber import Chamber
 import logging
 
@@ -44,17 +44,8 @@ class ChamberFactory:
         firebase_client.add_chamber(chamber, ChamberType.YOUTUBE)
         return chamber
 
-    def __get_reddit_chamber(self, identifier: str) -> Chamber:
-        firebase_client = get_firebase()
-        chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.REDDIT)
-        if chamber_from_db is not None:
-            return chamber_from_db
-
-        reddit_client = get_reddit()
-        chamber = reddit_client.get_post_chamber(identifier=identifier)
-        firebase_client.add_chamber(chamber, ChamberType.REDDIT)
-
-        return chamber
+    def __get_reddit_chamber(self, tags: list[str]) -> Chamber:
+        raise NotImplementedError
 
     def __get_x_chamber(self, tags: list[str]) -> Chamber:
         raise NotImplementedError

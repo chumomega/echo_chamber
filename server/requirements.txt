@@ -8,7 +8,6 @@ certifi==2024.6.2
 cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
-colorama==0.4.6
 cryptography==42.0.8
 decorator==5.1.1
 exceptiongroup==1.2.1
@@ -49,8 +48,6 @@ pathspec==0.12.1
 pexpect==4.9.0
 platformdirs==4.2.2
 pluggy==1.5.0
-praw==7.7.1
-prawcore==2.4.0
 prompt_toolkit==3.0.47
 proto-plus==1.23.0
 protobuf==4.25.3
@@ -74,10 +71,8 @@ tomli==2.0.1
 tqdm==4.66.4
 traitlets==5.14.3
 typing_extensions==4.12.2
-update-checker==0.18.0
 uritemplate==4.1.1
 urllib3==2.2.1
 wcwidth==0.2.13
-websocket-client==1.8.0
 Werkzeug==3.0.3
 zipp==3.19.2

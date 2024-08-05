@@ -1,7 +1,6 @@
 from flask import g
 from model.FirebaseClient import FirebaseClient
 from model.YoutubeClient import YoutubeClient
-from model.RedditClient import RedditClient
 from model.GeminiClient import GeminiClient
 
 
@@ -19,14 +18,6 @@ def get_youtube() -> YoutubeClient:
         g.youtube = YoutubeClient()
 
     return g.youtube
-
-
-# add reddit client to Flask application context so only 1 instance of youtube running per Flask request
-def get_reddit() -> RedditClient:
-    if "reddit" not in g:
-        g.reddit = RedditClient()
-
-    return g.reddit
 
 
 # add gemini client to Flask application context so only 1 instance of gemini running per Flask request

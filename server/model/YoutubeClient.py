@@ -21,7 +21,7 @@ class YoutubeClient:
 
     def get_video_chamber(self, identifier: str) -> Chamber:
         video_request = self.youtube_client.videos().list(
-            part="snippet", id=identifier, maxResults=1
+            part="snippet", id=identifier, maxResults=MAX_OPINIONS
         )
         video_response = video_request.execute()
 
@@ -41,12 +41,12 @@ class YoutubeClient:
         )
 
     def get_video_comments(
-        self, identifier: str, num_comments: int = MAX_OPINIONS
+        self, identifier: str, num_comments: int = None
     ) -> list[Comment]:
         comment_thread_request = self.youtube_client.commentThreads().list(
             part="snippet",
             videoId=identifier,
-            maxResults=num_comments,
+            maxResults=num_comments if num_comments is not None else MAX_OPINIONS,
             order="relevance",
             textFormat="plainText",
         )
