@@ -2,6 +2,8 @@
 const SERVER_URL = "https://echochamber-mtxmtj5oba-ue.a.run.app/"
 // const SERVER_URL = "http://127.0.0.1:8000"
 const DESKTOP_YOUTUBE_VIDEO_REGEX = /^(https\:\/\/www\.youtube\.com\/watch\?v=){1}.+/;
+const REDDIT_REGEX = /^(https?:\/\/)?(?:www\.)?reddit\.com\/r\/[\w\d\-_]+\/comments\/[\w\d]+/;
+const REDDIT_ID_REGEX = /\/r\/[\w\d]+\/comments\/([\w\d]+)\//;
 
 const isDesktopYoutubeUrl = (searchQuery) => {
     return DESKTOP_YOUTUBE_VIDEO_REGEX.test(searchQuery);
@@ -11,6 +13,17 @@ const getPodcastIdFromDesktopYoutubeVideoUrl = (desktopYoutubeUrl) => {
     let urlSearchParamsStart = desktopYoutubeUrl.indexOf('?')
     let urlSearchParams = desktopYoutubeUrl.substring(urlSearchParamsStart)
     return (new URLSearchParams(urlSearchParams)).get('v');
+}
+
+const isRedditUrl = (searchQuery) => {
+    isReddit = REDDIT_REGEX.test(searchQuery)
+    console.log(`Reddit Match found ${isReddit}`)
+    return isReddit;
+}
+
+const getPodcastIdFromRedditUrl = (redditUrl) => {
+    const match = REDDIT_ID_REGEX.exec(redditUrl);
+    return match ? match[1] : null;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -130,6 +143,9 @@ async function getIdentifierAndType() {
     if (isDesktopYoutubeUrl(tab.url)) {
         identifier = getPodcastIdFromDesktopYoutubeVideoUrl(tab.url)
         type = "youtube"
+    } else if (isRedditUrl(tab.url)) {
+        identifier = getPodcastIdFromRedditUrl(tab.url)
+        type = "reddit"
     } else {
         throw(`Supported Platform content not found for url: ${tab.url}`)
     }
