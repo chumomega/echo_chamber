@@ -153,7 +153,7 @@ class GeminiClient:
 
     def get_tags_for_chamber(
         self, chamber: Chamber, comments: list[Comment]
-    ) -> list[Comment]:
+    ) -> list[str]:
         content_json = chamber.get_json_body_for_tags()
         content_comments_json = self.get_json_comments_str_for_tags(comments)
         prompt = """

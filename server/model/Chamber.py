@@ -92,6 +92,8 @@ class Chamber:
         match self.chamber_type:
             case ChamberType.YOUTUBE:
                 return f"https://www.youtube.com/watch?v={self.id}"
+            case ChamberType.REDDIT:
+                return f"https://redd.it/{self.id}"
             case _:
                 raise Exception(f"Unsupported chamber type: {self.chamber_type}")
 

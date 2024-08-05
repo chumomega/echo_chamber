@@ -38,7 +38,7 @@ def get_diverse_echo_chambers():
     )
 
     similar_tag_chambers = chamber_factory.get_chambers(
-        map(lambda chamber_id: (chamber_id, "youtube"), similar_tag_chamber_ids)
+        map(lambda chamber_id: (chamber_id, chamber_type), similar_tag_chamber_ids)
     )
     filtered_similar_chambers = list(
         filter(
@@ -48,9 +48,12 @@ def get_diverse_echo_chambers():
             similar_tag_chambers,
         )
     )
-    similar_chamber_urls = chamber_factory.get_similar_youtube_chamber_urls(
-        tags=chamber_tags
-    )
+    if chamber_type == ChamberType.YOUTUBE.value:
+        similar_chamber_urls = chamber_factory.get_similar_youtube_chamber_urls(
+            tags=chamber_tags
+        )
+    else:
+        similar_chamber_urls=[]
 
     data = {
         "chamberTags": chamber_tags,

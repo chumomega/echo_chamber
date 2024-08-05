@@ -11,7 +11,6 @@ logging.basicConfig(level=logging.INFO)
 
 MAX_OPINIONS = 5
 
-
 # Do not create yourself. please use via context initializers :)
 class RedditClient:
     def __init__(self) -> None:

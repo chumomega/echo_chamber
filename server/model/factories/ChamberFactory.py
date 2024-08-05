@@ -64,7 +64,7 @@ class ChamberFactory:
             case ChamberType.YOUTUBE.value:
                 return self.__get_similar_youtube_chamber_ids(tags)
             case ChamberType.REDDIT.value:
-                return self.__get_similar_reddit_chamber(tags)
+                return self.__get_similar_reddit_chamber_ids(tags)
             case ChamberType.X.value:
                 return self.__get_similar_x_chamber(tags)
             case _:
@@ -102,8 +102,21 @@ class ChamberFactory:
             )
         return similar_chambers
 
-    def __get_similar_reddit_chamber(self, tags: list[str]) -> list[Chamber]:
-        raise NotImplementedError
+    def __get_similar_reddit_chamber_ids(self, tags: list[str]) -> list[Chamber]:
+        """
+        This method retrieve all chambers with similar tags for now...
+        """
+        firebase_client = get_firebase()
+
+        if len(tags) == 0:
+            return []
+
+        similar_chambers = set()
+        for tag in tags:
+            similar_chambers.update(
+                firebase_client.get_tag_chamber_ids(tag, ChamberType.REDDIT )
+            )
+        return similar_chambers
 
     def __get_similar_x_chamber(self, tags: list[str]) -> list[Chamber]:
         raise NotImplementedError
