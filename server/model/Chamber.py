@@ -94,10 +94,12 @@ class Chamber:
                 return f"https://www.youtube.com/watch?v={self.id}"
             case ChamberType.REDDIT:
                 return f"https://redd.it/{self.id}"
+            case ChamberType.TWITTER:
+                return f"https://x.com/{self.author}/status/{self.id}"
             case _:
                 raise Exception(f"Unsupported chamber type: {self.chamber_type}")
 
-    def __str__(self):
+    def __repr__(self):
         return f"Chamber(id='{self.id}', type='{self.chamber_type}', title='{self.title}', description='{self.description}', \
             author='{self.author}', created_timestamp='{self.created_timestamp}', \
                 label_magnitudes='{self.label_magnitudes}', chamber_status='{self.chamber_status}', \

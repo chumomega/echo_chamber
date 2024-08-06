@@ -21,8 +21,8 @@ class ChamberTagFactory:
                 return self.get_youtube_chamber_tags(identifier)
             case ChamberType.REDDIT.value:
                 return self.__get_reddit_chamber_tags(identifier)
-            case ChamberType.X.value:
-                return self.__get_x_chamber_tags(identifier)
+            case ChamberType.TWITTER.value:
+                return self.__get_twitter_chamber_tags(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
@@ -48,7 +48,6 @@ class ChamberTagFactory:
         firebase_client.add_chamber_tags(identifier, ChamberType.YOUTUBE, tags)
         return tags
 
-
     def __get_reddit_chamber_tags(self, identifier: str) -> list[str]:
         firebase_client = get_firebase()
         chamber_tags_from_db = firebase_client.get_chamber_tags(
@@ -71,6 +70,24 @@ class ChamberTagFactory:
         firebase_client.add_chamber_tags(identifier, ChamberType.REDDIT, tags)
         return tags
 
+    def __get_twitter_chamber_tags(self, identifier: str) -> list[str]:
+        firebase_client = get_firebase()
+        chamber_tags_from_db = firebase_client.get_chamber_tags(
+            identifier, ChamberType.TWITTER
+        )
+        if len(chamber_tags_from_db) > 0:
+            return chamber_tags_from_db
 
-    def __get_x_chamber_tags(self, identifier: str) -> list[str]:
-        raise NotImplementedError
+        chamber_x = ChamberFactory().get_chamber(
+            identifier=identifier, chamber_type=ChamberType.TWITTER.value
+        )
+        chamber_members = ChamberMemberFactory().get_chamber_members(
+            identifier=identifier, chamber_type=ChamberType.TWITTER.value
+        )
+
+        gemini_client = get_gemini()
+        tags = gemini_client.get_tags_for_chamber(
+            chamber=chamber_x, comments=chamber_members
+        )
+        firebase_client.add_chamber_tags(identifier, ChamberType.TWITTER, tags)
+        return tags
