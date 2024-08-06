@@ -22,7 +22,7 @@ const isRedditUrl = (searchQuery) => {
     return isReddit;
 }
 
-const getPodcastIdFromRedditUrl = (redditUrl) => {
+const getThreadIdFromRedditUrl = (redditUrl) => {
     const match = REDDIT_ID_REGEX.exec(redditUrl);
     return match ? match[1] : null;
 }
@@ -155,7 +155,7 @@ async function getIdentifierAndType() {
         identifier = getVideoIdFromDesktopYoutubeVideoUrl(tab.url)
         type = "youtube"
     } else if (isRedditUrl(tab.url)) {
-        identifier = getVideoIdFromDesktopYoutubeVideoUrl(tab.url)
+        identifier = getThreadIdFromRedditUrl(tab.url)
         type = "reddit"
     } else if (isTwitterUrl(tab.url)) {
         identifier = getStatusIdFromTwitterUrl(tab.url)
