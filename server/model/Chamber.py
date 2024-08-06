@@ -94,6 +94,8 @@ class Chamber:
                 return f"https://www.youtube.com/watch?v={self.id}"
             case ChamberType.REDDIT:
                 return f"https://redd.it/{self.id}"
+            case ChamberType.TWITTER:
+                return f"https://x.com/{self.author}/status/{self.id}"
             case _:
                 raise Exception(f"Unsupported chamber type: {self.chamber_type}")
 

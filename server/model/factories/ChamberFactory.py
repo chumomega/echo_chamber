@@ -75,7 +75,7 @@ class ChamberFactory:
             case ChamberType.REDDIT.value:
                 return self.__get_similar_reddit_chamber_ids(tags)
             case ChamberType.TWITTER.value:
-                return self.__get_similar_x_chamber(tags)
+                return self.__get_similar_twitter_chamber(tags)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
@@ -127,5 +127,18 @@ class ChamberFactory:
             )
         return similar_chambers
 
-    def __get_similar_x_chamber(self, tags: list[str]) -> list[Chamber]:
-        raise NotImplementedError
+    def __get_similar_twitter_chamber(self, tags: list[str]) -> list[Chamber]:
+        """
+        This method retrieve all chambers with similar tags for now...
+        """
+        firebase_client = get_firebase()
+
+        if len(tags) == 0:
+            return []
+
+        similar_chambers = set()
+        for tag in tags:
+            similar_chambers.update(
+                firebase_client.get_tag_chamber_ids(tag, ChamberType.TWITTER)
+            )
+        return similar_chambers

@@ -27,7 +27,7 @@ class TwitterClient:
             return None
 
         user = self.twitter_client.get_user(
-            id=tweet.author_id, user_fields=["name"]
+            id=tweet.author_id, user_fields=["username"]
         ).data
 
         if user is None:
@@ -38,7 +38,7 @@ class TwitterClient:
             chamber_type=ChamberType.TWITTER.value,
             title=tweet.text,
             description="",
-            author=user.name,
+            author=user.username,
         )
 
     def get_post_comments(
@@ -55,7 +55,7 @@ class TwitterClient:
 
         for tweet in quote_tweets:
             user = self.twitter_client.get_user(
-                id=tweet.author_id, user_fields=["name"]
+                id=tweet.author_id, user_fields=["username"]
             ).data
 
             if user is None:
@@ -65,7 +65,7 @@ class TwitterClient:
                 Comment(
                     id=str(tweet.id),
                     text=tweet.text,
-                    author=user.name,
+                    author=user.username,
                 )
             )
 
