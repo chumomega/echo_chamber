@@ -1,5 +1,5 @@
 from model.ChamberType import ChamberType
-from context_initializers import get_firebase, get_youtube, get_reddit
+from context_initializers import get_firebase, get_youtube, get_reddit, get_twitter
 from model.Chamber import Chamber
 import logging
 
@@ -18,8 +18,8 @@ class ChamberFactory:
                 return self.__get_youtube_chamber(identifier)
             case ChamberType.REDDIT.value:
                 return self.__get_reddit_chamber(identifier)
-            case ChamberType.X.value:
-                return self.__get_x_chamber(identifier)
+            case ChamberType.TWITTER.value:
+                return self.__get_twitter_chamber(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
@@ -56,8 +56,17 @@ class ChamberFactory:
 
         return chamber
 
-    def __get_x_chamber(self, tags: list[str]) -> Chamber:
-        raise NotImplementedError
+    def __get_twitter_chamber(self, identifier: str) -> Chamber:
+        firebase_client = get_firebase()
+        chamber_from_db = firebase_client.get_chamber(identifier, ChamberType.TWITTER)
+        if chamber_from_db is not None:
+            return chamber_from_db
+
+        twitter_client = get_twitter()
+        chamber = twitter_client.get_post_chamber(identifier=identifier)
+        firebase_client.add_chamber(chamber, ChamberType.TWITTER)
+
+        return chamber
 
     def get_similar_chambers_ids(self, chamber_type: str, tags: list[str]) -> set[str]:
         match chamber_type:
@@ -65,7 +74,7 @@ class ChamberFactory:
                 return self.__get_similar_youtube_chamber_ids(tags)
             case ChamberType.REDDIT.value:
                 return self.__get_similar_reddit_chamber_ids(tags)
-            case ChamberType.X.value:
+            case ChamberType.TWITTER.value:
                 return self.__get_similar_x_chamber(tags)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
@@ -114,7 +123,7 @@ class ChamberFactory:
         similar_chambers = set()
         for tag in tags:
             similar_chambers.update(
-                firebase_client.get_tag_chamber_ids(tag, ChamberType.REDDIT )
+                firebase_client.get_tag_chamber_ids(tag, ChamberType.REDDIT)
             )
         return similar_chambers
 

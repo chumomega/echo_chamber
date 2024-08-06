@@ -2,7 +2,13 @@ import praw.models
 from model.ChamberType import ChamberType
 from model.Comment import Comment
 import praw
-from context_initializers import get_firebase, get_youtube, get_gemini, get_reddit
+from context_initializers import (
+    get_firebase,
+    get_youtube,
+    get_gemini,
+    get_reddit,
+    get_twitter,
+)
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,13 +21,16 @@ class ChamberMemberFactory:
         return
 
     def get_chamber_members(self, identifier: str, chamber_type: str) -> list[Comment]:
+        logger.info(
+            f"Retrieving chamber members for identifier={identifier} and chamber_type={chamber_type}"
+        )
         match chamber_type:
             case ChamberType.YOUTUBE.value:
                 return self.__get_youtube_chamber_members(identifier)
             case ChamberType.REDDIT.value:
                 return self.__get_reddit_chamber_members(identifier)
-            case ChamberType.X.value:
-                return self.__get_x_chamber_members(identifier)
+            case ChamberType.TWITTER.value:
+                return self.__get_twitter_chamber_members(identifier)
             case _:
                 raise Exception(f"Unsupported chamber type: {chamber_type}")
 
@@ -65,5 +74,22 @@ class ChamberMemberFactory:
 
         return comments_with_labels
 
-    def __get_x_chamber_members(self, identifier: str) -> list[Comment]:
-        raise NotImplementedError
+    def __get_twitter_chamber_members(self, identifier: str) -> list[Comment]:
+        firebase_client = get_firebase()
+        twitter_client = get_twitter()
+
+        comments = firebase_client.get_chamber_members(identifier, ChamberType.TWITTER)
+        if len(comments) > 0:
+            return comments
+
+        comments = twitter_client.get_post_comments(
+            identifier=identifier, num_comments=10
+        )
+
+        gemini_client = get_gemini()
+        comments_with_labels = gemini_client.get_labels_for_comments(comments=comments)
+
+        for comment in comments_with_labels:
+            firebase_client.add_chamber_member(identifier, ChamberType.TWITTER, comment)
+
+        return comments_with_labels

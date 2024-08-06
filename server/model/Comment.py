@@ -1,5 +1,4 @@
 import time
-from typing import TypedDict
 from model.LabelMagnitudes import PoliticalLabelMagnitudes
 
 
@@ -53,7 +52,7 @@ class Comment:
             "author": self.author,
         }
 
-    def __str__(self):
+    def __repr__(self):
         return f"Comment(id='{self.id}', text='{self.text}', author='{self.author}', \
             created_timestamp='{self.created_timestamp}', label_magnitudes='{self.label_magnitudes}')"
 

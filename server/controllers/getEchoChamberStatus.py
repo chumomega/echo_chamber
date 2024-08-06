@@ -22,48 +22,57 @@ def hello_world():
 
 @echo_chamber_info_routes.route("/getEchoChamberStatus")
 def get_echo_chamber_status():
-    identifier = request.args.get("identifier")
-    chamber_type = request.args.get("chamber_type")
-    validateInput(identifier, chamber_type)
+    try:
+        identifier = request.args.get("identifier")
+        chamber_type = request.args.get("chamber_type")
+        validateInput(identifier, chamber_type)
 
-    chamber_x = ChamberFactory().get_chamber(
-        identifier=identifier, chamber_type=chamber_type
-    )
-    biased_chamber = chamber_x.get_chamber_status()
-    chamber_label_magnitudes = chamber_x.get_label_magnitudes()
-    firebase_client = get_firebase()
-
-    if chamber_label_magnitudes is None:
-        logger.info("No label magnitudes in db, trying to generate...")
-        chamber_members = ChamberMemberFactory().get_chamber_members(
+        chamber_x = ChamberFactory().get_chamber(
             identifier=identifier, chamber_type=chamber_type
         )
-        chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
-        firebase_client.update_chamber_label_magnitudes(
-            identifier=identifier,
-            chamber_type=chamber_type,
-            label_magnitudes=chamber_label_magnitudes,
-        )
+        if chamber_x is None:
+            raise Exception(f"No chamber found with id={identifier}")
 
-    if biased_chamber is None:
-        logger.info("No chamber status in db, trying to generate...")
-        biased_chamber = get_biased_chamber(chamber_label_magnitudes)
-        if biased_chamber is not None:
-            firebase_client.add_chamber_status(
+        biased_chamber = chamber_x.get_chamber_status()
+        chamber_label_magnitudes = chamber_x.get_label_magnitudes()
+        firebase_client = get_firebase()
+
+        if chamber_label_magnitudes is None:
+            logger.info("No label magnitudes in db, trying to generate...")
+            chamber_members = ChamberMemberFactory().get_chamber_members(
+                identifier=identifier, chamber_type=chamber_type
+            )
+            chamber_label_magnitudes = get_avg_label_magnitude(chamber_members)
+            firebase_client.update_chamber_label_magnitudes(
                 identifier=identifier,
                 chamber_type=chamber_type,
-                chamber_status=biased_chamber,
+                label_magnitudes=chamber_label_magnitudes,
             )
 
-    data = {
-        "isBiasedChamber": True if biased_chamber != None else False,
-        "chamberLabelMagnitudes": chamber_label_magnitudes,
-        "biasedChamber": biased_chamber,
-    }
-    response = jsonify(data)
-    # TODO Replace with your frontend origin
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+        if biased_chamber is None:
+            logger.info("No chamber status in db, trying to generate...")
+            biased_chamber = get_biased_chamber(chamber_label_magnitudes)
+            if biased_chamber is not None:
+                firebase_client.add_chamber_status(
+                    identifier=identifier,
+                    chamber_type=chamber_type,
+                    chamber_status=biased_chamber,
+                )
+
+        data = {
+            "isBiasedChamber": True if biased_chamber != None else False,
+            "chamberLabelMagnitudes": chamber_label_magnitudes,
+            "biasedChamber": biased_chamber,
+        }
+        response = jsonify(data)
+        # TODO Replace with your frontend origin
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+    except Exception as e:
+        logger.error("Could not get chamber status", e)
+        response = jsonify({"error": "Could not get chamber status"})
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 def validateInput(identifier: str, chamber_type: str) -> None:

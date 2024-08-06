@@ -53,7 +53,7 @@ def get_diverse_echo_chambers():
             tags=chamber_tags
         )
     else:
-        similar_chamber_urls=[]
+        similar_chamber_urls = []
 
     data = {
         "chamberTags": chamber_tags,

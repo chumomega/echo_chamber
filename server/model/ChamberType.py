@@ -4,7 +4,7 @@ from enum import StrEnum
 class ChamberType(StrEnum):
     YOUTUBE = "youtube"
     REDDIT = "reddit"
-    X = "x"
+    TWITTER = "twitter"
 
     @classmethod
     def has_value(cls, value):
