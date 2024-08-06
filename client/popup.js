@@ -4,12 +4,14 @@ const SERVER_URL = "https://echochamber-mtxmtj5oba-ue.a.run.app/"
 const DESKTOP_YOUTUBE_VIDEO_REGEX = /^(https\:\/\/www\.youtube\.com\/watch\?v=){1}.+/;
 const REDDIT_REGEX = /^(https?:\/\/)?(?:www\.)?reddit\.com\/r\/[\w\d\-_]+\/comments\/[\w\d]+/;
 const REDDIT_ID_REGEX = /\/r\/[\w\d]+\/comments\/([\w\d]+)\//;
+const TWITTER_REGEX = /^https:\/\/(www\.)?x\.com\/(?:[A-Za-z0-9]+)\/status\/([0-9]+)$/;
+const TWITTER_ID_REGEX = /\/status\/(\d+)/;
 
 const isDesktopYoutubeUrl = (searchQuery) => {
     return DESKTOP_YOUTUBE_VIDEO_REGEX.test(searchQuery);
 }
 
-const getPodcastIdFromDesktopYoutubeVideoUrl = (desktopYoutubeUrl) => {
+const getVideoIdFromDesktopYoutubeVideoUrl = (desktopYoutubeUrl) => {
     let urlSearchParamsStart = desktopYoutubeUrl.indexOf('?')
     let urlSearchParams = desktopYoutubeUrl.substring(urlSearchParamsStart)
     return (new URLSearchParams(urlSearchParams)).get('v');
@@ -17,12 +19,21 @@ const getPodcastIdFromDesktopYoutubeVideoUrl = (desktopYoutubeUrl) => {
 
 const isRedditUrl = (searchQuery) => {
     isReddit = REDDIT_REGEX.test(searchQuery)
-    console.log(`Reddit Match found ${isReddit}`)
     return isReddit;
 }
 
 const getPodcastIdFromRedditUrl = (redditUrl) => {
     const match = REDDIT_ID_REGEX.exec(redditUrl);
+    return match ? match[1] : null;
+}
+
+const isTwitterUrl = (searchQuery) => {
+    isTwitter = TWITTER_REGEX.test(searchQuery)
+    return isTwitter;
+}
+
+const getStatusIdFromTwitterUrl = (twitterUrl) => {
+    const match = TWITTER_ID_REGEX.exec(twitterUrl);
     return match ? match[1] : null;
 }
 
@@ -141,11 +152,14 @@ async function getIdentifierAndType() {
     let identifier = null
     let type = null
     if (isDesktopYoutubeUrl(tab.url)) {
-        identifier = getPodcastIdFromDesktopYoutubeVideoUrl(tab.url)
+        identifier = getVideoIdFromDesktopYoutubeVideoUrl(tab.url)
         type = "youtube"
     } else if (isRedditUrl(tab.url)) {
-        identifier = getPodcastIdFromRedditUrl(tab.url)
+        identifier = getVideoIdFromDesktopYoutubeVideoUrl(tab.url)
         type = "reddit"
+    } else if (isTwitterUrl(tab.url)) {
+        identifier = getStatusIdFromTwitterUrl(tab.url)
+        type = "twitter"
     } else {
         throw(`Supported Platform content not found for url: ${tab.url}`)
     }
