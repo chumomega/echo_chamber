@@ -20,52 +20,61 @@ echo_chamber_recommendation_routes = Blueprint(
 
 @echo_chamber_recommendation_routes.route("/getDiverseEchoChambers")
 def get_diverse_echo_chambers():
-    identifier = request.args.get("identifier")
-    chamber_type = request.args.get("chamber_type")
-    validateInput(identifier, chamber_type)
+    try:
+        identifier = request.args.get("identifier")
+        chamber_type = request.args.get("chamber_type")
+        validateInput(identifier, chamber_type)
 
-    chamber_tag_factory = ChamberTagFactory()
-    chamber_tags = chamber_tag_factory.get_chamber_tags(
-        identifier=identifier, chamber_type=chamber_type
-    )
-
-    chamber_factory = ChamberFactory()
-    chamber = chamber_factory.get_chamber(
-        identifier=identifier, chamber_type=chamber_type
-    )
-    similar_tag_chamber_ids = chamber_factory.get_similar_chambers_ids(
-        chamber_type=chamber_type, tags=chamber_tags
-    )
-
-    similar_tag_chambers = chamber_factory.get_chambers(
-        map(lambda chamber_id: (chamber_id, chamber_type), similar_tag_chamber_ids)
-    )
-    filtered_similar_chambers = list(
-        filter(
-            lambda sim_tag_chamber: sim_tag_chamber != None
-            and sim_tag_chamber.get_chamber_status() != None
-            and sim_tag_chamber.get_chamber_status() != chamber.get_chamber_status(),
-            similar_tag_chambers,
+        chamber_tag_factory = ChamberTagFactory()
+        chamber_tags = chamber_tag_factory.get_chamber_tags(
+            identifier=identifier, chamber_type=chamber_type
         )
-    )
-    if chamber_type == ChamberType.YOUTUBE.value:
-        similar_chamber_urls = chamber_factory.get_similar_youtube_chamber_urls(
-            tags=chamber_tags
-        )
-    else:
-        similar_chamber_urls = []
 
-    data = {
-        "chamberTags": chamber_tags,
-        "diverseChambers": list(similar_chamber_urls),
-        "diverseChamberObjects": list(
-            map(lambda chamber: chamber.get_serialized(), filtered_similar_chambers)
-        ),
-    }
-    response = jsonify(data)
-    # TODO Replace with your frontend origin
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+        chamber_factory = ChamberFactory()
+        chamber = chamber_factory.get_chamber(
+            identifier=identifier, chamber_type=chamber_type
+        )
+        similar_tag_chamber_ids = chamber_factory.get_similar_chambers_ids(
+            chamber_type=chamber_type, tags=chamber_tags
+        )
+
+        similar_tag_chambers = chamber_factory.get_chambers(
+            map(lambda chamber_id: (chamber_id, chamber_type), similar_tag_chamber_ids)
+        )
+        filtered_similar_chambers = list(
+            filter(
+                lambda sim_tag_chamber: sim_tag_chamber != None
+                and sim_tag_chamber.get_chamber_status() != None
+                and sim_tag_chamber.get_chamber_status()
+                != chamber.get_chamber_status(),
+                similar_tag_chambers,
+            )
+        )
+        if chamber_type == ChamberType.YOUTUBE.value:
+            similar_chamber_urls = chamber_factory.get_similar_youtube_chamber_urls(
+                tags=chamber_tags
+            )
+        else:
+            similar_chamber_urls = []
+
+        data = {
+            "chamberTags": chamber_tags,
+            "diverseChambers": list(similar_chamber_urls),
+            "diverseChamberObjects": list(
+                map(lambda chamber: chamber.get_serialized(), filtered_similar_chambers)
+            ),
+        }
+        response = jsonify(data)
+        # TODO Replace with your frontend origin
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+    except Exception as e:
+        logger.error(
+            f"Could not get diverse chambers for {identifier} on {chamber_type}", e
+        )
+        response = jsonify({"error": "Could not get diverse chambers"})
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 def validateInput(identifier: str, chamber_type: str) -> None:

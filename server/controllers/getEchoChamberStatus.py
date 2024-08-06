@@ -69,7 +69,9 @@ def get_echo_chamber_status():
         response.headers["Access-Control-Allow-Origin"] = "*"
         return response
     except Exception as e:
-        logger.error("Could not get chamber status", e)
+        logger.error(
+            f"Could not get chamber status for {identifier} on {chamber_type}", e
+        )
         response = jsonify({"error": "Could not get chamber status"})
         response.headers["Access-Control-Allow-Origin"] = "*"
         return response

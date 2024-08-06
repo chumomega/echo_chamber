@@ -18,35 +18,43 @@ echo_chamber_reasoning_routes = Blueprint("echo_chamber_reasoning_routes", __nam
 
 @echo_chamber_reasoning_routes.route("/getEchoChamberReasoning")
 def get_echo_chamber_reasoning():
-    identifier = request.args.get("identifier")
-    chamber_type = request.args.get("chamber_type")
-    validateInput(identifier, chamber_type)
+    try:
+        identifier = request.args.get("identifier")
+        chamber_type = request.args.get("chamber_type")
+        validateInput(identifier, chamber_type)
 
-    chamber_x = ChamberFactory().get_chamber(
-        identifier=identifier, chamber_type=chamber_type
-    )
-
-    chamber_reasoning = chamber_x.get_chamber_reasoning()
-    if chamber_reasoning is None:
-        logger.info("No chamber reasoning in db, trying to generate...")
-        firebase_client = get_firebase()
-        chamber_members = ChamberMemberFactory().get_chamber_members(
+        chamber_x = ChamberFactory().get_chamber(
             identifier=identifier, chamber_type=chamber_type
         )
-        chamber_reasoning = get_gemini().get_reasoning_for_comments(
-            chamber_x, chamber_members
-        )
-        firebase_client.add_chamber_reasoning(
-            identifier=identifier,
-            chamber_type=chamber_type,
-            chamber_reasoning=chamber_reasoning,
-        )
 
-    data = {"chamberReasoning": chamber_reasoning}
-    response = jsonify(data)
-    # TODO Replace with your frontend origin
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    return response
+        chamber_reasoning = chamber_x.get_chamber_reasoning()
+        if chamber_reasoning is None:
+            logger.info("No chamber reasoning in db, trying to generate...")
+            firebase_client = get_firebase()
+            chamber_members = ChamberMemberFactory().get_chamber_members(
+                identifier=identifier, chamber_type=chamber_type
+            )
+            chamber_reasoning = get_gemini().get_reasoning_for_comments(
+                chamber_x, chamber_members
+            )
+            firebase_client.add_chamber_reasoning(
+                identifier=identifier,
+                chamber_type=chamber_type,
+                chamber_reasoning=chamber_reasoning,
+            )
+
+        data = {"chamberReasoning": chamber_reasoning}
+        response = jsonify(data)
+        # TODO Replace with your frontend origin
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+    except Exception as e:
+        logger.error(
+            f"Could not get chamber reasoning for {identifier} on {chamber_type}", e
+        )
+        response = jsonify({"error": "Could not get chamber reasoning"})
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
 
 
 def validateInput(identifier: str, chamber_type: str) -> None:
