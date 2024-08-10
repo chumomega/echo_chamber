@@ -115,22 +115,22 @@ class GeminiClient:
         self, chamber: Chamber, comments: list[Comment]
     ) -> str:
         prompt = """
-            Put your reporter hat on, meaning using quotes and data for explanations.
+            Put your reporter hat on, meaning use quotes and data for explanations.
 
             I'll be giving you data on a potential echo chamber in the "potential_echo_chamber" value 
-            with things like the status I calculated and the magnitude of various labels.
-            Please analyze it and the "chamber_members" to generate an explanation on why said chamber 
+            with things like the calculated status "chamber_status" and the relative contribution of that the chambe "relative_contr".
+            Please analyze it and the "chamber_members" to craft an explanation on why said chamber 
             is or is not a chamber.
             
             Make sure to provide the reasoning for the explanation in a JSON format like: {"reasoning": "Insert Reasoning here"}
 
             Rules:
-            - If it is an echo chamber, use the magnitude for it in your explanation
-            - Use double quotes for JSON. This is very important
+            - If it is an echo chamber, use the "relative_contr" provided in your explanation
+            - Use double quotes for JSON
             - Explain at 10th grade reading level or below.
             - Use 80 words or less
-            - Use snippets of examples in your explanation
-            - Don't explicitly say "potential_echo_chamber" or "chamber_members" in your explanation
+            - Use short quotes (5 words or less) to illustrate your explanation
+            - Don't explicitly say "potential_echo_chamber", "chamber_members" or any keys in your explanation
 
             "potential_echo_chamber": $potential_echo_chamber
             "chamber_members": $chamber_members

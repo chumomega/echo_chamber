@@ -74,7 +74,10 @@ class Chamber:
             "title": self.title,
             "author": self.author,
             "label_magnitudes": self.label_magnitudes,
-            "chamber_status": self.chamber_status,
+            "chamber_status": (
+                "Not a chamber" if self.chamber_status is None else self.chamber_status
+            ),
+            "relative_contr": self.get_chamber_percentage(),
         }
 
     def get_serialized(self) -> dict:
@@ -87,6 +90,22 @@ class Chamber:
             "chamber_reasoning": self.chamber_reasoning,
             "url": self.__get_url_for_chamber(),
         }
+
+    def get_chamber_percentage(self) -> float:
+        sum = 0
+
+        if (
+            self.chamber_status == None
+            or self.chamber_status not in self.label_magnitudes
+        ):
+            return 0
+
+        for _, value in self.label_magnitudes.items():
+            sum += value
+
+        return round(
+            (self.label_magnitudes[self.chamber_status] / sum) * 100, ndigits=2
+        )
 
     def __get_url_for_chamber(self) -> str:
         match self.chamber_type:
