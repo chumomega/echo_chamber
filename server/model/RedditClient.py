@@ -51,7 +51,7 @@ class RedditClient:
                 Comment(
                     id=top_level_comment.id,
                     text=top_level_comment.body,
-                    author=top_level_comment.author.name,
+                    author= top_level_comment.author.name if top_level_comment.author is not None else None
                 )
             )
             if len(comments) == num_comments:
